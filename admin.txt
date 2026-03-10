@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة تحكم المسابقة</title>
+    <style>
+        body { font-family: Arial; background: #eee; padding: 20px; text-align: center; }
+        .panel { background: white; max-width: 500px; margin: auto; padding: 30px; border-radius: 10px; }
+        button { padding: 15px 30px; background: #2A3F46; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 20px; }
+    </style>
+</head>
+<body>
+    <div id="login-panel" class="panel">
+        <h2>دخول المتحكم</h2>
+        <input type="password" id="pass" placeholder="كلمة المرور">
+        <button onclick="login()">دخول</button>
+    </div>
+
+    <div id="admin-panel" class="panel" style="display:none;">
+        <h2>بدء السحب اليومي</h2>
+        <div id="stats">جاري جلب المتأهلين...</div>
+        <br>
+        <button id="spinBtn" onclick="triggerSpin()">إطلاق العجلة الآن 🎡</button>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "ضع_رابط_جوجل_هنا";
+        const bc = new BroadcastChannel('wheel_control');
+
+        function login() {
+            if(document.getElementById('pass').value === 'admin-sunnan1212') {
+                document.getElementById('login-panel').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                loadData();
+            } else { alert("كلمة المرور خطأ"); }
+        }
+
+        function loadData() {
+            fetch(`${SCRIPT_URL}?action=getQualified`)
+                .then(res => res.json())
+                .then(names => {
+                    document.getElementById('stats').innerText = `عدد المتأهلين (إجابات صحيحة وبدون تكرار): ${names.length}`;
+                });
+        }
+
+        function triggerSpin() {
+            // كود اختيار فائز عشوائي وإرساله لصفحة العرض
+            bc.postMessage({ action: 'spin', winner: 'فائز عشوائي', prize: 'جائزة عشوائية' });
+        }
+    </script>
+</body>
+</html>
