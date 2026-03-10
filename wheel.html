@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>عجلة سحب أعلام السنة</title>
+    <style>
+        :root { --primary: #2A3F46; --bg: #F3EFE9; }
+        body { background: var(--bg); text-align: center; font-family: Arial; overflow: hidden; }
+        #winners-list { background: var(--primary); color: white; padding: 15px; display: flex; justify-content: center; gap: 20px; font-size: 20px; }
+        .wheel-container { position: relative; width: 600px; height: 600px; margin: 20px auto; }
+        canvas { border-radius: 50%; border: 10px solid var(--primary); }
+        #pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 40px; z-index: 10; }
+    </style>
+</head>
+<body>
+    <div id="winners-list">الفائزون: <span id="names">في انتظار السحب...</span></div>
+    
+    <div class="wheel-container">
+        <img src="images/pointer.png" id="pointer"> <canvas id="mainWheel" width="600" height="600"></canvas>
+    </div>
+
+    <script>
+        // هذا الملف سيستقبل أوامر من لوحة التحكم عبر BroadcastChannel (يعمل في نفس المتصفح)
+        const bc = new BroadcastChannel('wheel_control');
+        
+        bc.onmessage = (ev) => {
+            if(ev.data.action === 'spin') {
+                // منطق دوران العجلة هنا
+                startSpin(ev.data.winner, ev.data.prize);
+            }
+        };
+
+        // ملاحظة: ستحتاج لإضافة كود رسم العجلة (Canvas Drawing) هنا بناءً على الأسماء والجوائز
+    </script>
+</body>
+</html>

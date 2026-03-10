@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مسابقة أعلام السنة | جمعية سنن</title>
+    <style>
+        /* تعريف الألوان والهوية */
+        :root {
+            --primary: #2A3F46;    /* أزرق بترولي داكن */
+            --secondary: #7D7168;  /* بني رمادي ترابي */
+            --bg-color: #F3EFE9;   /* بيج كريمي خلفية */
+            --white: #FFFFFF;
+            --accent: #8C847D;     /* رمادي دافئ */
+        }
+
+        /* استدعاء الخط الخاص */
+        @font-face {
+            font-family: 'Handicrafts';
+            src: url('fonts/TheYearofHandicrafts-Bold.otf') format('opentype');
+            font-weight: bold;
+        }
+
+        body {
+            font-family: 'Handicrafts', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* الهيدر والشعارات */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--secondary);
+            margin-bottom: 30px;
+        }
+
+        .logo-main { max-height: 150px; object-fit: contain; }
+        .logo-contest { max-height: 150px; object-fit: contain; }
+
+        /* البطاقات والمدخلات */
+        .card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 1px solid rgba(125, 113, 104, 0.1);
+        }
+
+        h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
+        
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--secondary); }
+
+        input[type="text"], input[type="tel"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 16px;
+        }
+
+        /* تنسيق الأسئلة */
+        .question-text { font-size: 18px; margin-bottom: 15px; display: block; color: var(--primary); }
+        
+        .options-container { display: flex; flex-direction: column; gap: 10px; }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #fdfcfb;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .option-label:hover { background: #f3f3f3; border-color: var(--secondary); }
+
+        .option-label input { margin-left: 12px; accent-color: var(--primary); width: 18px; height: 18px; }
+
+        /* الأزرار */
+        .submit-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            width: 100%;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-family: 'Handicrafts', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(42, 63, 70, 0.3);
+        }
+
+        .submit-btn:hover { background-color: #1e2e33; transform: translateY(-2px); }
+        .submit-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        /* الرعاة */
+        footer { text-align: center; margin-top: 80px; padding-bottom: 80px; }
+        footer p { color: var(--accent); font-size: 14px; margin-bottom: 15px; }
+
+        .sponsors {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .sponsors img { height: 100px; object-fit: contain; filter: grayscale(20%); transition: 0.3s; }
+        .sponsors img:hover { filter: grayscale(0%); }
+
+        /* الحالات */
+        #loading, #success, #no-questions { display: none; text-align: center; padding: 40px 20px; }
+        .status-icon { font-size: 50px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <img src="images/logo-sunnan.png" class="logo-main" alt="جمعية سنن">
+        <img src="images/logo-contest.png" class="logo-contest" alt="مسابقة أعلام السنة">
+    </header>
+
+    <div id="loading">
+        <p>جاري تحميل أسئلة اليوم...</p>
+    </div>
+
+    <div id="quiz-ui">
+        <div class="card">
+            <h2>بيانات المشارك</h2>
+            <label>الاسم الثلاثي:</label>
+            <input type="text" id="name" placeholder="أدخل اسمك هنا">
+            <label>رقم الجوال:</label>
+            <input type="tel" id="phone" placeholder="05xxxxxxxx">
+        </div>
+
+        <div id="questions-list">
+            </div>
+
+        <button class="submit-btn" id="submit-btn" onclick="sendData()">إرسال المشاركة</button>
+    </div>
+
+    <div id="success" class="card">
+        <div class="status-icon">✅</div>
+        <h2>تم استلام إجاباتك!</h2>
+        <p>شكراً لمشاركتك في مسابقة أعلام السنة.</p>
+    </div>
+
+    <div id="no-questions" class="card">
+        <div class="status-icon">⏳</div>
+        <h2>لا توجد أسئلة حالياً</h2>
+        <p>انتظرونا في المسابقة القادمة بإذن الله.</p>
+    </div>
+
+    <footer>
+        <p>برعاية كريمة من</p>
+        <div class="sponsors">
+            <img src="images/sponsor1.png" alt="رياش">
+            <img src="images/sponsor2.png" alt="نسيل">
+        </div>
+    </footer>
+</div>
+
+<script>
+    // --- إعدادات الربط ---
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvLhO5O811M2Xq9V6W_E9H-7K_9E_9E/exec"; // ضع رابطك هنا
+
+    // تحميل الأسئلة فور فتح الصفحة
+    window.onload = function() {
+        showSection('loading');
+        fetch(`${SCRIPT_URL}?action=getQuestions`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length === 0 || data.status === "no_questions") {
+                    showSection('no-questions');
+                } else {
+                    renderQuestions(data);
+                    showSection('quiz-ui');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showSection('no-questions');
+            });
+    };
+
+    function renderQuestions(questions) {
+        const container = document.getElementById('questions-list');
+        questions.forEach((q, index) => {
+            const qNum = index + 1;
+            container.innerHTML += `
+                <div class="card">
+                    <span class="question-text">س${qNum}: ${q.question}</span>
+                    <div class="options-container">
+                        ${q.options.map((opt, i) => `
+                            <label class="option-label">
+                                <input type="radio" name="q${qNum}" value="${opt}" required>
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function sendData() {
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
+        const btn = document.getElementById('submit-btn');
+
+        // التحقق من البيانات
+        if (!name || !phone) { alert("أبو خليل، لا تنسَ إكمال الاسم ورقم الجوال!"); return; }
+        
+        const responses = {
+            action: "submitQuiz",
+            name: name,
+            phone: phone,
+            q1: document.querySelector('input[name="q1"]:checked')?.value || "",
+            q2: document.querySelector('input[name="q2"]:checked')?.value || "",
+            q3: document.querySelector('input[name="q3"]:checked')?.value || "",
+            q4: document.querySelector('input[name="q4"]:checked')?.value || ""
+        };
+
+        if (!responses.q1 || !responses.q2 || !responses.q3 || !responses.q4) {
+            alert("يرجى الإجابة على جميع الأسئلة الأربعة لدخول السحب.");
+            return;
+        }
+
+        // إرسال البيانات
+        btn.disabled = true;
+        btn.innerText = "جاري الإرسال...";
+
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors", // للتعامل مع قيود Apps Script
+            cache: "no-cache",
+            body: JSON.stringify(responses)
+        }).then(() => {
+            showSection('success');
+        }).catch(err => {
+            alert("حدث خطأ في الإرسال، يرجى المحاولة مرة أخرى.");
+            btn.disabled = false;
+            btn.innerText = "إرسال المشاركة";
+        });
+    }
+
+    function showSection(id) {
+        ['loading', 'quiz-ui', 'success', 'no-questions'].forEach(sec => {
+            document.getElementById(sec).style.display = (sec === id) ? 'block' : 'none';
+        });
+    }
+</script>
+
+</body>
+</html>
