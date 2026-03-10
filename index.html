@@ -5,16 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مسابقة أعلام السنة | جمعية سنن</title>
     <style>
-        /* تعريف الألوان والهوية */
         :root {
-            --primary: #2A3F46;    /* أزرق بترولي داكن */
-            --secondary: #7D7168;  /* بني رمادي ترابي */
-            --bg-color: #F3EFE9;   /* بيج كريمي خلفية */
+            --primary: #2A3F46;
+            --secondary: #7D7168;
+            --bg-color: #F3EFE9;
             --white: #FFFFFF;
-            --accent: #8C847D;     /* رمادي دافئ */
+            --accent: #8C847D;
         }
 
-        /* استدعاء الخط الخاص */
         @font-face {
             font-family: 'Handicrafts';
             src: url('fonts/TheYearofHandicrafts-Bold.otf') format('opentype');
@@ -36,7 +34,6 @@
             padding: 20px;
         }
 
-        /* الهيدر والشعارات */
         header {
             display: flex;
             justify-content: space-between;
@@ -49,7 +46,6 @@
         .logo-main { max-height: 150px; object-fit: contain; }
         .logo-contest { max-height: 150px; object-fit: contain; }
 
-        /* البطاقات والمدخلات */
         .card {
             background: var(--white);
             padding: 25px;
@@ -74,7 +70,6 @@
             font-size: 16px;
         }
 
-        /* تنسيق الأسئلة */
         .question-text { font-size: 18px; margin-bottom: 15px; display: block; color: var(--primary); }
         
         .options-container { display: flex; flex-direction: column; gap: 10px; }
@@ -91,10 +86,8 @@
         }
 
         .option-label:hover { background: #f3f3f3; border-color: var(--secondary); }
-
         .option-label input { margin-left: 12px; accent-color: var(--primary); width: 18px; height: 18px; }
 
-        /* الأزرار */
         .submit-btn {
             background-color: var(--primary);
             color: var(--white);
@@ -112,7 +105,6 @@
         .submit-btn:hover { background-color: #1e2e33; transform: translateY(-2px); }
         .submit-btn:disabled { background-color: #ccc; cursor: not-allowed; }
 
-        /* الرعاة */
         footer { text-align: center; margin-top: 80px; padding-bottom: 80px; }
         footer p { color: var(--accent); font-size: 14px; margin-bottom: 15px; }
 
@@ -124,11 +116,9 @@
             flex-wrap: wrap;
         }
 
-        /* تم تعديل المقاس هنا ليصبح 150px (زيادة 50%) */
         .sponsors img { height: 150px; object-fit: contain; filter: grayscale(20%); transition: 0.3s; }
         .sponsors img:hover { filter: grayscale(0%); }
 
-        /* الحالات */
         #loading, #success, #no-questions { display: none; text-align: center; padding: 40px 20px; }
         .status-icon { font-size: 50px; margin-bottom: 20px; }
     </style>
@@ -141,9 +131,7 @@
         <img src="images/logo-contest.png" class="logo-contest" alt="مسابقة أعلام السنة">
     </header>
 
-    <div id="loading">
-        <p>جاري تحميل أسئلة اليوم...</p>
-    </div>
+    <div id="loading"><p>جاري تحميل أسئلة اليوم...</p></div>
 
     <div id="quiz-ui">
         <div class="card">
@@ -153,10 +141,7 @@
             <label>رقم الجوال:</label>
             <input type="tel" id="phone" placeholder="05xxxxxxxx">
         </div>
-
-        <div id="questions-list">
-            </div>
-
+        <div id="questions-list"></div>
         <button class="submit-btn" id="submit-btn" onclick="sendData()">إرسال المشاركة</button>
     </div>
 
@@ -173,7 +158,7 @@
     </div>
 
     <footer>
-        <p>الرعاة المـــشاركين</p>
+        <p>الـــرعاة المشاركين</p>
         <div class="sponsors">
             <img src="images/sponsor1.png" alt="رياش">
             <img src="images/sponsor2.png" alt="نسيل">
@@ -182,16 +167,14 @@
 </div>
 
 <script>
-    // --- إعدادات الربط ---
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEfNFt8mRZxyCXOrCH-FIJ_Jcoqr79RyiveJK4phUkh7fb5K6VaM-kCMEGD1UTIZBk/exec"; // ضع رابطك هنا
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMOsIogFPSNXeuzHC_9SnD0z8TbBEXIJtnNy13n_R3LpJ_BU6GPmJPYI0MAKQVEUCE/exec";
 
-    // تحميل الأسئلة فور فتح الصفحة
     window.onload = function() {
         showSection('loading');
         fetch(`${SCRIPT_URL}?action=getQuestions`)
             .then(response => response.json())
             .then(data => {
-                if (data.length === 0 || data.status === "no_questions") {
+                if (!data || data.length === 0 || data.status === "no_questions") {
                     showSection('no-questions');
                 } else {
                     renderQuestions(data);
@@ -206,7 +189,8 @@
 
     function renderQuestions(questions) {
         const container = document.getElementById('questions-list');
-        questions.forEach((q, index) => {
+        // تم إضافة slice(0, 3) هنا لضمان عرض 3 أسئلة فقط حتى لو أرسل السكربت أكثر
+        questions.slice(0, 3).forEach((q, index) => {
             const qNum = index + 1;
             container.innerHTML += `
                 <div class="card">
@@ -229,8 +213,7 @@
         const phone = document.getElementById('phone').value;
         const btn = document.getElementById('submit-btn');
 
-        // التحقق من البيانات
-        if (!name || !phone) { alert("، لا تنسَ إكمال الاسم ورقم الجوال!"); return; }
+        if (!name || !phone) { alert("لا تنسَ إكمال الاسم ورقم الجوال!"); return; }
         
         const responses = {
             action: "submitQuiz",
@@ -241,19 +224,17 @@
             q3: document.querySelector('input[name="q3"]:checked')?.value || ""
         };
 
-        // تم تعديل التحقق ليكون لـ 3 أسئلة فقط
         if (!responses.q1 || !responses.q2 || !responses.q3) {
             alert("يرجى الإجابة على جميع الأسئلة لدخول السحب.");
             return;
         }
 
-        // إرسال البيانات
         btn.disabled = true;
         btn.innerText = "جاري الإرسال...";
 
         fetch(SCRIPT_URL, {
             method: "POST",
-            mode: "no-cors", // للتعامل مع قيود Apps Script
+            mode: "no-cors",
             cache: "no-cache",
             body: JSON.stringify(responses)
         }).then(() => {
@@ -271,8 +252,5 @@
         });
     }
 </script>
-
 </body>
-
 </html>
-
