@@ -124,7 +124,8 @@
             flex-wrap: wrap;
         }
 
-        .sponsors img { height: 100px; object-fit: contain; filter: grayscale(20%); transition: 0.3s; }
+        /* تم تعديل المقاس هنا ليصبح 150px (زيادة 50%) */
+        .sponsors img { height: 150px; object-fit: contain; filter: grayscale(20%); transition: 0.3s; }
         .sponsors img:hover { filter: grayscale(0%); }
 
         /* الحالات */
@@ -147,7 +148,7 @@
     <div id="quiz-ui">
         <div class="card">
             <h2>بيانات المشارك</h2>
-            <label>الاسم الثلاثي:</label>
+            <label>الاسم :</label>
             <input type="text" id="name" placeholder="أدخل اسمك هنا">
             <label>رقم الجوال:</label>
             <input type="tel" id="phone" placeholder="05xxxxxxxx">
@@ -229,7 +230,7 @@
         const btn = document.getElementById('submit-btn');
 
         // التحقق من البيانات
-        if (!name || !phone) { alert("أبو خليل، لا تنسَ إكمال الاسم ورقم الجوال!"); return; }
+        if (!name || !phone) { alert("، لا تنسَ إكمال الاسم ورقم الجوال!"); return; }
         
         const responses = {
             action: "submitQuiz",
@@ -237,12 +238,12 @@
             phone: phone,
             q1: document.querySelector('input[name="q1"]:checked')?.value || "",
             q2: document.querySelector('input[name="q2"]:checked')?.value || "",
-            q3: document.querySelector('input[name="q3"]:checked')?.value || "",
-            q4: document.querySelector('input[name="q4"]:checked')?.value || ""
+            q3: document.querySelector('input[name="q3"]:checked')?.value || ""
         };
 
-        if (!responses.q1 || !responses.q2 || !responses.q3 || !responses.q4) {
-            alert("يرجى الإجابة على جميع الأسئلة الأربعة لدخول السحب.");
+        // تم تعديل التحقق ليكون لـ 3 أسئلة فقط
+        if (!responses.q1 || !responses.q2 || !responses.q3) {
+            alert("يرجى الإجابة على جميع الأسئلة لدخول السحب.");
             return;
         }
 
