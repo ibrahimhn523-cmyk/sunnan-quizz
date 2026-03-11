@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جمعية سنن | مسابقة أعلام السنة</title>
+    <title>سحب جمعية سنن | أعلام السنة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -53,13 +53,13 @@
 
     <!-- الهيدر (متجاوب: يصغر في الجوال ويكبر في الكمبيوتر) -->
     <header class="flex-none bg-white border-b border-[#7D7168]/20 px-4 lg:px-8 py-3 lg:py-4 flex justify-between items-center shadow-md z-50">
-        <img src="images/logo-sunnan.png" class="h-24 md:h-32 lg:h-48 w-auto object-contain" alt="شعار جمعية سنن">
+        <img src="images/logo-sunnan.png" class="h-12 md:h-16 lg:h-24 w-auto object-contain" alt="شعار جمعية سنن">
         <div class="text-center px-2">
-            <h1 class="text-lg md:text-2xl lg:text-4xl font-black text-[#2A3F46] leading-tight">مسابقة أعـــلام السنة</h1>
+            <h1 class="text-lg md:text-2xl lg:text-4xl font-black text-[#2A3F46] leading-tight">مسابقة أعلام السنة</h1>
             <div class="h-1 lg:h-1.5 w-16 lg:w-32 bg-[#C5B358] mx-auto rounded-full mt-1 lg:mt-2"></div>
-            <p class="text-[#7D7168] font-bold mt-1 text-xs lg:text-base"></p>
+            <p class="text-[#7D7168] font-bold mt-1 text-xs lg:text-base">البث المباشر للسحب</p>
         </div>
-        <img src="images/logo-contest.png" class="h-24 md:h-32 lg:h-48 w-auto object-contain" alt="شعار المسابقة">
+        <img src="images/logo-contest.png" class="h-12 md:h-16 lg:h-24 w-auto object-contain" alt="شعار المسابقة">
     </header>
 
     <!-- المنطقة الرئيسية (تصبح سكرول في الجوال، وثابتة في الكمبيوتر) -->
@@ -123,7 +123,7 @@
         <aside class="order-3 lg:order-1 flex flex-col w-full lg:w-80 h-[250px] lg:h-full bg-white rounded-[30px] lg:rounded-[40px] shadow-2xl border border-[#7D7168]/10 overflow-hidden shrink-0">
             <div class="flex-none bg-[#2A3F46] p-4 lg:p-6 text-white text-center">
                 <h3 class="font-bold text-lg lg:text-xl flex items-center justify-center gap-3">
-                    <span>👤 قــائمة المشاركـــين</span>
+                    <span>👤 المتأهلون</span>
                     <span id="participantsCount" class="bg-[#C5B358] text-[#2A3F46] px-3 py-0.5 rounded-full text-xs lg:text-sm font-black">0</span>
                 </h3>
             </div>
@@ -139,7 +139,7 @@
     <!-- الفوتر (يلتف في الجوال flex-wrap) -->
     <footer class="flex-none bg-white border-t border-[#7D7168]/15 px-6 lg:px-12 py-4 lg:py-5 flex flex-wrap justify-center items-center gap-6 lg:gap-16 shadow-inner z-50">
         <div class="flex items-center gap-3 lg:gap-5 border-l-2 lg:border-l-4 border-[#F3EFE9] pl-6 lg:pl-12 w-full md:w-auto text-center justify-center">
-            <span class="text-xs lg:text-sm font-black text-[#8C847D] uppercase tracking-[0.2em]">الــرعاة المشاركين</span>
+            <span class="text-xs lg:text-sm font-black text-[#8C847D] uppercase tracking-[0.2em]">شركاء النجاح</span>
         </div>
         <img src="images/sponsor1.png" class="sponsor-img h-10 lg:h-16 w-auto object-contain" alt="الراعي الأول">
         <img src="images/sponsor2.png" class="sponsor-img h-10 lg:h-16 w-auto object-contain" alt="الراعي الثاني">
@@ -151,6 +151,8 @@
         
         let participants = [];
         let winners = [];
+        let fetchedWinners = [];
+        let initialParticipants = [];
         let isReplaying = false;
 
         const canvas = document.getElementById('confettiCanvas');
@@ -230,6 +232,48 @@
         }
         animate();
 
+        async function fetchData() {
+            try {
+                const [qRes, wRes] = await Promise.all([
+                    fetch(`${SCRIPT_URL}?action=getQualified`).then(r => r.json()),
+                    fetch(`${SCRIPT_URL}?action=getWinnersList`).then(r => r.json()).catch(() => [])
+                ]);
+                
+                let qList = qRes || [];
+                fetchedWinners = wRes || [];
+                
+                // بناء قائمة المتأهلين الأصلية لضمان عدم وجود تكرار
+                let combined = [...qList];
+                fetchedWinners.forEach(w => {
+                    if(!combined.includes(w.name)) combined.push(w.name);
+                });
+                initialParticipants = combined;
+
+                if (fetchedWinners.length > 0) {
+                    // إذا كان هناك فائزين سابقين، نخفيهم ونجهز زر الإعادة
+                    participants = [...initialParticipants];
+                    winners = [];
+                    
+                    const btn = document.getElementById('replayBtn');
+                    btn.innerHTML = "<span>▶️ لإعادة عرض السحب</span>";
+                    btn.classList.remove('hidden');
+                    
+                    const hintMsg = document.getElementById('giftContainer').lastElementChild;
+                    if(hintMsg) hintMsg.innerText = "السحب انتهى، اضغط على زر إعادة العرض للبدء";
+                } else {
+                    participants = [...initialParticipants];
+                    winners = [];
+                }
+            } catch (e) {
+                console.error("خطأ في الاتصال بالسيرفر:", e);
+            } finally {
+                updateUI();
+                document.getElementById('loadingStatus').classList.add('hidden');
+                document.getElementById('giftContainer').classList.remove('hidden');
+                document.getElementById('giftContainer').classList.add('block');
+            }
+        }
+
         async function performExplosion(winnerData) {
             const gift = document.getElementById('giftContainer'), msg = document.getElementById('shakeMessage'), btn = document.getElementById('replayBtn');
             btn.classList.add('hidden'); gift.classList.add('animate-shake'); msg.classList.remove('hidden');
@@ -239,11 +283,15 @@
             document.getElementById('winnerPrize').innerText = winnerData.prize;
             document.getElementById('winnerCard').classList.remove('hidden');
             createParticles();
-            if (!isReplaying) {
-                winners.push(winnerData);
-                participants = participants.filter(p => p !== winnerData.name);
-                updateUI();
-                if (winners.length > 0) btn.classList.remove('hidden');
+            
+            // تحديث القوائم دائماً (سواء سحب مباشر أو محاكاة إعادة عرض)
+            winners.push(winnerData);
+            participants = participants.filter(p => p !== winnerData.name);
+            updateUI();
+            
+            if (!isReplaying && winners.length > 0) {
+                btn.innerHTML = "<span>▶️ لإعادة عرض السحب</span>";
+                btn.classList.remove('hidden');
             }
         }
 
@@ -255,25 +303,41 @@
         }
 
         bc.onmessage = (e) => {
-            if (e.data.type === 'SPIN') performExplosion({ name: e.data.winner, prize: e.data.prize });
-            if (e.data.type === 'INIT') { participants = e.data.qualified; updateUI(); }
+            if (e.data.type === 'SPIN') {
+                fetchedWinners.push({ name: e.data.winner, prize: e.data.prize });
+                performExplosion({ name: e.data.winner, prize: e.data.prize });
+            }
+            if (e.data.type === 'INIT') { 
+                participants = e.data.qualified; 
+                initialParticipants = [...participants];
+                updateUI(); 
+            }
         };
 
         async function startReplay() {
-            if (winners.length === 0 || isReplaying) return;
+            if (fetchedWinners.length === 0 || isReplaying) return;
             isReplaying = true;
-            const originalWinners = [...winners];
-            winners = []; updateUI(); document.getElementById('replayBtn').classList.add('hidden');
-            for (const w of originalWinners) {
+            
+            // تصفير القوائم استعداداً لمحاكاة السحب
+            winners = [];
+            participants = [...initialParticipants];
+            updateUI();
+            
+            document.getElementById('replayBtn').classList.add('hidden');
+            
+            for (const w of fetchedWinners) {
                 await performExplosion(w);
                 await new Promise(r => setTimeout(r, 4000));
                 resetView();
             }
-            winners = originalWinners; updateUI(); isReplaying = false;
+            
+            isReplaying = false;
+            const btn = document.getElementById('replayBtn');
+            btn.innerHTML = "<span>▶️ إعادة عرض السحب</span>";
+            btn.classList.remove('hidden');
         }
 
         window.onload = fetchData;
     </script>
 </body>
 </html>
-
