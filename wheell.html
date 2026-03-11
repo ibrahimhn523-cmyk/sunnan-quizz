@@ -7,32 +7,26 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* تم ربط خطوط عام الحرف العربي بناءً على ملفاتك المرفوعة */
+        /* ⚠️ استبدل مسارات الخطوط بمساراتك الفعلية ⚠️ */
         @font-face {
             font-family: 'CustomFont';
             src: url('fonts/TheYearofHandicrafts-Regular.otf') format('opentype');
-            font-weight: 400; /* الوزن العادي */
-            font-style: normal;
+            font-weight: 400;
         }
-        
         @font-face {
             font-family: 'CustomFont';
             src: url('fonts/TheYearofHandicrafts-Bold.otf') format('opentype');
-            font-weight: 700; /* الوزن العريض */
-            font-style: normal;
+            font-weight: 700;
         }
-
         @font-face {
             font-family: 'CustomFont';
             src: url('fonts/TheYearofHandicrafts-Black.otf') format('opentype');
-            font-weight: 900; /* الوزن العريض جداً (الأسود) */
-            font-style: normal;
+            font-weight: 900;
         }
 
-        /* سيتم استخدام الخط المرفوع أولاً، وإذا لم يعمل سيستخدم خط تجوال كاحتياطي */
         body { font-family: 'CustomFont', 'Tajawal', sans-serif; background-color: #F3EFE9; }
         
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #7D7168; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #2A3F46; }
@@ -57,24 +51,80 @@
 </head>
 <body class="flex flex-col h-screen w-full overflow-hidden">
 
-    <header class="flex-none bg-white border-b border-[#7D7168]/20 px-8 py-4 flex justify-between items-center shadow-md z-50">
-        <img src="images/logo-sunnan.png" class="h-20 md:h-24 w-auto object-contain" alt="شعار جمعية سنن">
-        <div class="text-center">
-            <h1 class="text-2xl md:text-4xl font-black text-[#2A3F46]">مسابقة أعــــلام السنة</h1>
-            <div class="h-1.5 w-32 bg-[#C5B358] mx-auto rounded-full mt-2"></div>
-            <p class="text-[#7D7168] font-bold mt-2 text-sm md:text-base">البث المباشر للسحب</p>
+    <!-- الهيدر (متجاوب: يصغر في الجوال ويكبر في الكمبيوتر) -->
+    <header class="flex-none bg-white border-b border-[#7D7168]/20 px-4 lg:px-8 py-3 lg:py-4 flex justify-between items-center shadow-md z-50">
+        <img src="images/logo-sunnan.png" class="h-12 md:h-16 lg:h-24 w-auto object-contain" alt="شعار جمعية سنن">
+        <div class="text-center px-2">
+            <h1 class="text-lg md:text-2xl lg:text-4xl font-black text-[#2A3F46] leading-tight">مسابقة أعلام السنة</h1>
+            <div class="h-1 lg:h-1.5 w-16 lg:w-32 bg-[#C5B358] mx-auto rounded-full mt-1 lg:mt-2"></div>
+            <p class="text-[#7D7168] font-bold mt-1 text-xs lg:text-base">البث المباشر للسحب</p>
         </div>
-        <img src="images/logo-contest.png" class="h-20 md:h-24 w-auto object-contain" alt="شعار المسابقة">
+        <img src="images/logo-contest.png" class="h-12 md:h-16 lg:h-24 w-auto object-contain" alt="شعار المسابقة">
     </header>
 
-    <main class="flex-1 min-h-0 flex overflow-hidden p-6 gap-6 relative w-full">
+    <!-- المنطقة الرئيسية (تصبح سكرول في الجوال، وثابتة في الكمبيوتر) -->
+    <!-- flex-col للجوال، lg:flex-row للكمبيوتر -->
+    <main class="flex-1 overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row p-4 lg:p-6 gap-4 lg:gap-6 relative w-full custom-scrollbar">
         <canvas id="confettiCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-40"></canvas>
 
-        <aside class="flex flex-col w-80 bg-white rounded-[40px] shadow-2xl border border-[#7D7168]/10 overflow-hidden h-full">
-            <div class="flex-none bg-[#2A3F46] p-6 text-white text-center">
-                <h3 class="font-bold text-xl flex items-center justify-center gap-3">
+        <!-- منطقة الصندوق (رقم 1 في الجوال، رقم 2 في الكمبيوتر) -->
+        <section class="order-1 lg:order-2 flex-none lg:flex-1 min-h-[350px] lg:min-h-0 flex flex-col items-center justify-center relative bg-[#2A3F46]/5 rounded-[30px] lg:rounded-[40px] border-4 border-dashed border-[#7D7168]/20 p-6 lg:p-10 text-center overflow-hidden shrink-0">
+            <div id="loadingStatus" class="text-[#7D7168] text-base lg:text-xl font-bold animate-pulse">جاري جلب قائمة المشاركين...</div>
+
+            <!-- الصندوق أصبح بحجم متجاوب max-w -->
+            <div id="giftContainer" class="hidden relative group transition-transform duration-500 hover:scale-110">
+                <svg viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full max-w-[220px] lg:max-w-[320px] drop-shadow-2xl mx-auto">
+                    <rect x="40" y="80" width="160" height="130" rx="8" fill="#7D7168" />
+                    <rect x="30" y="60" width="180" height="40" rx="4" fill="#8C847D" />
+                    <rect x="110" y="60" width="20" height="150" fill="#F3EFE9" />
+                    <path d="M120 60C120 60 160 20 180 40C200 60 140 60 120 60Z" fill="#F3EFE9" stroke="#8C847D" stroke-width="2"/>
+                    <path d="M120 60C120 60 80 20 60 40C40 60 100 60 120 60Z" fill="#F3EFE9" stroke="#8C847D" stroke-width="2"/>
+                    <circle cx="120" cy="60" r="12" fill="#F3EFE9" stroke="#8C847D" stroke-width="2"/>
+                    <ellipse cx="120" cy="225" rx="90" ry="12" fill="black" fill-opacity="0.1" />
+                </svg>
+                <div id="shakeMessage" class="absolute -top-10 lg:-top-16 left-1/2 -translate-x-1/2 bg-[#C5B358] text-white px-6 lg:px-10 py-2 lg:py-3 rounded-full font-black shadow-2xl hidden whitespace-nowrap text-sm lg:text-base">🎁 جاري اختيار الفائز...</div>
+                <div class="absolute -bottom-8 lg:-bottom-10 left-1/2 -translate-x-1/2 text-[#7D7168] font-bold text-sm lg:text-lg opacity-80 whitespace-nowrap">بانتظار إشارة السحب من الإدارة</div>
+            </div>
+
+            <!-- بطاقة الفائز -->
+            <div id="winnerCard" class="hidden scale-in flex flex-col items-center z-50 w-full">
+                <div class="bg-white p-8 lg:p-16 rounded-[40px] lg:rounded-[60px] shadow-2xl border-b-[8px] lg:border-b-[12px] border-[#C5B358] text-center max-w-lg w-full">
+                    <div class="bg-[#C5B358]/10 w-16 h-16 lg:w-24 lg:h-24 rounded-full flex items-center justify-center mx-auto mb-4 lg:mb-8 text-[#C5B358]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 lg:w-12 lg:h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                    </div>
+                    <span class="text-xs lg:text-sm font-black text-[#8C847D] tracking-[0.2em] lg:tracking-[0.4em] uppercase mb-2 lg:mb-4 block">المشارك الفائز</span>
+                    <h2 id="winnerName" class="text-2xl md:text-4xl lg:text-5xl font-black text-[#2A3F46] mb-6 lg:mb-8 leading-tight">...</h2>
+                    <div class="bg-[#F3EFE9] py-3 px-6 lg:py-5 lg:px-8 rounded-2xl lg:rounded-[25px]">
+                        <span id="winnerPrize" class="text-lg md:text-2xl lg:text-3xl font-bold text-[#7D7168]">...</span>
+                    </div>
+                </div>
+                <button onclick="resetView()" class="mt-6 lg:mt-10 bg-[#2A3F46] text-white px-8 py-3 lg:px-10 lg:py-4 rounded-full font-bold hover:bg-[#1e2e33] transition-all flex items-center gap-3 shadow-xl text-sm lg:text-lg">
+                    <span>🔄 العودة للصندوق</span>
+                </button>
+            </div>
+
+            <button id="replayBtn" onclick="startReplay()" class="absolute bottom-6 lg:bottom-10 left-1/2 -translate-x-1/2 hidden flex items-center gap-3 bg-white px-6 py-3 lg:px-10 lg:py-4 rounded-full shadow-2xl border-2 border-[#C5B358] text-[#2A3F46] font-black hover:scale-105 transition-all text-sm lg:text-lg z-50 whitespace-nowrap">
+                <span>▶️ إعادة عرض السحب</span>
+            </button>
+        </section>
+
+        <!-- سجل الفائزين (رقم 2 في الجوال، رقم 3 في الكمبيوتر) -->
+        <aside class="order-2 lg:order-3 flex flex-col w-full lg:w-80 h-[250px] lg:h-full bg-white rounded-[30px] lg:rounded-[40px] shadow-2xl border border-[#C5B358]/30 overflow-hidden shrink-0">
+            <div class="flex-none bg-[#C5B358] p-4 lg:p-6 text-[#2A3F46] text-center">
+                <h3 class="font-bold text-lg lg:text-xl flex items-center justify-center gap-3">
+                    <span>🏆 سجل الفائزين</span>
+                    <span id="winnersCount" class="bg-[#2A3F46] text-white px-3 py-0.5 rounded-full text-xs lg:text-sm font-black">0</span>
+                </h3>
+            </div>
+            <div id="winnersList" class="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 lg:p-5 space-y-3 lg:space-y-4"></div>
+        </aside>
+
+        <!-- قائمة المشاركين (رقم 3 في الجوال، رقم 1 في الكمبيوتر) -->
+        <aside class="order-3 lg:order-1 flex flex-col w-full lg:w-80 h-[250px] lg:h-full bg-white rounded-[30px] lg:rounded-[40px] shadow-2xl border border-[#7D7168]/10 overflow-hidden shrink-0">
+            <div class="flex-none bg-[#2A3F46] p-4 lg:p-6 text-white text-center">
+                <h3 class="font-bold text-lg lg:text-xl flex items-center justify-center gap-3">
                     <span>👤 المتأهلون</span>
-                    <span id="participantsCount" class="bg-[#C5B358] text-[#2A3F46] px-3 py-0.5 rounded-full text-sm font-black">0</span>
+                    <span id="participantsCount" class="bg-[#C5B358] text-[#2A3F46] px-3 py-0.5 rounded-full text-xs lg:text-sm font-black">0</span>
                 </h3>
             </div>
             <div class="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
@@ -84,61 +134,15 @@
             </div>
         </aside>
 
-        <section class="flex-1 min-h-0 flex flex-col items-center justify-center relative bg-[#2A3F46]/5 rounded-[40px] border-4 border-dashed border-[#7D7168]/20 p-10 text-center overflow-hidden">
-            <div id="loadingStatus" class="text-[#7D7168] text-xl font-bold animate-pulse">جاري جلب قائمة المشاركين...</div>
-
-            <div id="giftContainer" class="hidden relative group transition-transform duration-500 hover:scale-110">
-                <svg width="320" height="320" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-2xl">
-                    <rect x="40" y="80" width="160" height="130" rx="8" fill="#7D7168" />
-                    <rect x="30" y="60" width="180" height="40" rx="4" fill="#8C847D" />
-                    <rect x="110" y="60" width="20" height="150" fill="#F3EFE9" />
-                    <path d="M120 60C120 60 160 20 180 40C200 60 140 60 120 60Z" fill="#F3EFE9" stroke="#8C847D" stroke-width="2"/>
-                    <path d="M120 60C120 60 80 20 60 40C40 60 100 60 120 60Z" fill="#F3EFE9" stroke="#8C847D" stroke-width="2"/>
-                    <circle cx="120" cy="60" r="12" fill="#F3EFE9" stroke="#8C847D" stroke-width="2"/>
-                    <ellipse cx="120" cy="225" rx="90" ry="12" fill="black" fill-opacity="0.1" />
-                </svg>
-                <div id="shakeMessage" class="absolute -top-16 left-1/2 -translate-x-1/2 bg-[#C5B358] text-white px-10 py-3 rounded-full font-black shadow-2xl hidden whitespace-nowrap">🎁 جاري اختيار الفائز...</div>
-                <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 text-[#7D7168] font-bold text-lg opacity-80 whitespace-nowrap">بانتظار إشارة السحب من الإدارة</div>
-            </div>
-
-            <div id="winnerCard" class="hidden scale-in flex flex-col items-center z-50">
-                <div class="bg-white p-12 md:p-16 rounded-[60px] shadow-2xl border-b-[12px] border-[#C5B358] text-center max-w-lg w-full">
-                    <div class="bg-[#C5B358]/10 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 text-[#C5B358]">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-                    </div>
-                    <span class="text-sm font-black text-[#8C847D] tracking-[0.4em] uppercase mb-4 block">المشارك الفائز</span>
-                    <h2 id="winnerName" class="text-4xl md:text-5xl font-black text-[#2A3F46] mb-8 leading-tight">...</h2>
-                    <div class="bg-[#F3EFE9] py-5 px-8 rounded-[25px]">
-                        <span id="winnerPrize" class="text-2xl md:text-3xl font-bold text-[#7D7168]">...</span>
-                    </div>
-                </div>
-                <button onclick="resetView()" class="mt-10 bg-[#2A3F46] text-white px-10 py-4 rounded-full font-bold hover:bg-[#1e2e33] transition-all flex items-center gap-4 shadow-xl text-lg">
-                    <span>🔄 العودة للصندوق</span>
-                </button>
-            </div>
-
-            <button id="replayBtn" onclick="startReplay()" class="absolute bottom-10 left-1/2 -translate-x-1/2 hidden flex items-center gap-4 bg-white px-10 py-4 rounded-3xl shadow-2xl border-2 border-[#C5B358] text-[#2A3F46] font-black hover:scale-105 transition-all text-lg z-50">
-                <span>▶️ إعادة عرض السحب</span>
-            </button>
-        </section>
-
-        <aside class="flex flex-col w-80 bg-white rounded-[40px] shadow-2xl border border-[#C5B358]/30 overflow-hidden h-full">
-            <div class="flex-none bg-[#C5B358] p-6 text-[#2A3F46] text-center">
-                <h3 class="font-bold text-xl flex items-center justify-center gap-3">
-                    <span>🏆 سجـل الفائزين</span>
-                    <span id="winnersCount" class="bg-[#2A3F46] text-white px-3 py-0.5 rounded-full text-sm font-black">0</span>
-                </h3>
-            </div>
-            <div id="winnersList" class="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-5 space-y-4"></div>
-        </aside>
     </main>
 
-    <footer class="flex-none bg-white border-t border-[#7D7168]/15 px-12 py-5 flex justify-center items-center gap-16 shadow-inner z-50">
-        <div class="flex items-center gap-5 border-l-4 border-[#F3EFE9] pl-12">
-            <span class="text-sm font-black text-[#8C847D] uppercase tracking-[0.2em]">الرعــاة المشاركين</span>
+    <!-- الفوتر (يلتف في الجوال flex-wrap) -->
+    <footer class="flex-none bg-white border-t border-[#7D7168]/15 px-6 lg:px-12 py-4 lg:py-5 flex flex-wrap justify-center items-center gap-6 lg:gap-16 shadow-inner z-50">
+        <div class="flex items-center gap-3 lg:gap-5 border-l-2 lg:border-l-4 border-[#F3EFE9] pl-6 lg:pl-12 w-full md:w-auto text-center justify-center">
+            <span class="text-xs lg:text-sm font-black text-[#8C847D] uppercase tracking-[0.2em]">شركاء النجاح</span>
         </div>
-        <img src="images/sponsor1.png" class="sponsor-img h-12 md:h-16 w-auto object-contain" alt="الراعي الأول">
-        <img src="images/sponsor2.png" class="sponsor-img h-12 md:h-16 w-auto object-contain" alt="الراعي الثاني">
+        <img src="images/sponsor1.png" class="sponsor-img h-10 lg:h-16 w-auto object-contain" alt="الراعي الأول">
+        <img src="images/sponsor2.png" class="sponsor-img h-10 lg:h-16 w-auto object-contain" alt="الراعي الثاني">
     </footer>
 
     <script>
@@ -170,29 +174,32 @@
                 winners = wRes || [];
             } catch (e) {
                 console.error("خطأ في الاتصال بالسيرفر:", e);
+            } finally {
+                // وضعنا التحديث هنا لكي يظهر الصندوق وتختفي رسالة التحميل دائماً
+                // حتى لو لم يكن هناك مشاركين في قوقل شيت (حل مشكلة التعليق الموضحة في صورتك)
+                updateUI();
+                document.getElementById('loadingStatus').classList.add('hidden');
+                document.getElementById('giftContainer').classList.remove('hidden');
+                document.getElementById('giftContainer').classList.add('block'); // ضمان الظهور
+                if (winners.length > 0) document.getElementById('replayBtn').classList.remove('hidden');
             }
-
-            updateUI();
-            document.getElementById('loadingStatus').classList.add('hidden');
-            document.getElementById('giftContainer').classList.remove('hidden');
-            if (winners.length > 0) document.getElementById('replayBtn').classList.remove('hidden');
         }
 
         function updateUI() {
             const pList = document.getElementById('participantsList');
             pList.innerHTML = participants.map((p, i) => `
                 <tr class="border-b border-[#F3EFE9] hover:bg-[#F3EFE9]/80 transition-colors">
-                    <td class="p-4 text-[12px] text-[#8C847D] w-12 text-center font-bold">${i + 1}</td>
-                    <td class="p-4 font-bold text-base text-[#2A3F46] text-center">${p}</td>
+                    <td class="p-3 lg:p-4 text-[10px] lg:text-[12px] text-[#8C847D] w-10 lg:w-12 text-center font-bold">${i + 1}</td>
+                    <td class="p-3 lg:p-4 font-bold text-sm lg:text-base text-[#2A3F46] text-center">${p}</td>
                 </tr>
             `).join('');
             document.getElementById('participantsCount').innerText = participants.length;
 
             const wList = document.getElementById('winnersList');
             wList.innerHTML = winners.slice().reverse().map(w => `
-                <div class="bg-[#F3EFE9] p-4 rounded-2xl border-r-8 border-[#C5B358] shadow-sm fade-in">
-                    <div class="font-black text-base text-[#2A3F46]">${w.name}</div>
-                    <div class="text-xs font-bold text-[#7D7168] mt-2">${w.prize}</div>
+                <div class="bg-[#F3EFE9] p-3 lg:p-4 rounded-xl lg:rounded-2xl border-r-[6px] lg:border-r-8 border-[#C5B358] shadow-sm fade-in">
+                    <div class="font-black text-sm lg:text-base text-[#2A3F46]">${w.name}</div>
+                    <div class="text-[10px] lg:text-xs font-bold text-[#7D7168] mt-1 lg:mt-2">${w.prize}</div>
                 </div>
             `).join('');
             document.getElementById('winnersCount').innerText = winners.length;
@@ -204,7 +211,7 @@
                 particles.push({
                     x: canvas.width / 2, y: canvas.height / 2,
                     vx: (Math.random() - 0.5) * 35, vy: (Math.random() - 0.5) * 35 - 15,
-                    size: Math.random() * 10 + 3,
+                    size: Math.random() * 8 + 3,
                     color: colors[Math.floor(Math.random() * colors.length)],
                     life: 1, decay: Math.random() * 0.01 + 0.005
                 });
@@ -227,7 +234,7 @@
             const gift = document.getElementById('giftContainer'), msg = document.getElementById('shakeMessage'), btn = document.getElementById('replayBtn');
             btn.classList.add('hidden'); gift.classList.add('animate-shake'); msg.classList.remove('hidden');
             await new Promise(r => setTimeout(r, 2000));
-            gift.classList.remove('animate-shake'); gift.classList.add('hidden'); msg.classList.add('hidden');
+            gift.classList.remove('animate-shake'); gift.classList.add('hidden'); gift.classList.remove('block'); msg.classList.add('hidden');
             document.getElementById('winnerName').innerText = winnerData.name;
             document.getElementById('winnerPrize').innerText = winnerData.prize;
             document.getElementById('winnerCard').classList.remove('hidden');
@@ -243,6 +250,7 @@
         function resetView() {
             document.getElementById('winnerCard').classList.add('hidden');
             document.getElementById('giftContainer').classList.remove('hidden');
+            document.getElementById('giftContainer').classList.add('block');
             if (winners.length > 0 && !isReplaying) document.getElementById('replayBtn').classList.remove('hidden');
         }
 
