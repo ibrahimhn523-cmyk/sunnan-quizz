@@ -4,17 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>البث المباشر للسحب | أعلام السنة</title>
+    
     <style>
+        /* =========================================
+           1. إعدادات الألوان والهوية البصرية
+           (تغيير الألوان هنا يغير شكل الموقع بالكامل)
+           ========================================= */
         :root { 
-            --primary: #2A3F46; 
-            --bg: #F3EFE9; 
-            --accent: #C5B358; 
-            --secondary: #7D7168;
-            --white: #FFFFFF;
+            --primary: #2A3F46;     /* اللون البترولي الداكن */
+            --bg: #F3EFE9;          /* لون الخلفية (البيج الكريمي) */
+            --accent: #C5B358;      /* لون الذهب (للمؤشر والجوائز) */
+            --secondary: #7D7168;   /* اللون البني الترابي */
+            --white: #FFFFFF;       /* اللون الأبيض النقي */
         }
 
+        /* =========================================
+           2. خصائص الخلفية وتنسيق الصفحة العام
+           ========================================= */
         body { 
-            background: var(--bg); 
+            background: var(--bg);  /* تطبيق لون الخلفية */
             margin: 0; 
             display: flex; 
             flex-direction: column; 
@@ -24,7 +32,9 @@
             overflow: hidden; 
         }
 
-        /* شريط الفائزين العلوي */
+        /* =========================================
+           3. شريط الفائزين العلوي (لوحة النتائج)
+           ========================================= */
         .winners-bar { 
             width: 100%; 
             background: var(--primary); 
@@ -32,7 +42,7 @@
             padding: 10px 0; 
             display: flex; 
             gap: 10px; 
-            overflow-x: auto; 
+            overflow-x: auto; /* يسمح بالتمرير إذا كثر الفائزون */
             min-height: 45px; 
             z-index: 50;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
@@ -47,22 +57,32 @@
             margin: 0 5px;
             font-size: 14px;
             display: inline-block;
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.5s ease; /* تأثير ظهور ناعم */
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* =========================================
+           4. مقاسات شعارات الهيدر (الجمعية والمسابقة)
+           ========================================= */
         header { 
             width: 90%; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: clamp(10px, 2vh, 20px) 0;
+            padding: clamp(20px, 2vh, 40px) 0;
             z-index: 10;
         }
 
-        .logo { height: clamp(45px, 7vh, 80px); max-width: 40%; object-fit: contain; }
+        .logo { 
+            height: clamp(67px, 7vh, 120px); /* مقاس الشعارات العلوية */
+            max-width: 40%; 
+            object-fit: contain; 
+        }
 
+        /* =========================================
+           5. منطقة العجلة المركزية (الموقع والترتيب)
+           ========================================= */
         main {
             flex: 1;
             display: flex; 
@@ -80,19 +100,29 @@
             justify-content: center;
         }
 
+        /* =========================================
+           6. إعدادات أداة الـ Canvas (العجلة)
+           ========================================= */
         canvas { 
+            /* التحكم في مقاس العجلة لتناسب الجوال والكمبيوتر */
             width: min(500px, 58vh, 85vw); 
             height: min(500px, 58vh, 85vw); 
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)); 
         }
 
+        /* =========================================
+           7. إعدادات سهم المؤشر الثابت (Pointer)
+           ========================================= */
         #pointer { 
             position: absolute; 
             top: -20px; 
-            width: clamp(30px, 5vh, 45px); 
+            width: clamp(30px, 5vh, 45px); /* حجم السهم العلوي */
             z-index: 40; 
         }
 
+        /* =========================================
+           8. نص الإعلان عن الفائز والرسائل
+           ========================================= */
         #announcement { 
             margin-top: 15px; 
             font-size: clamp(18px, 3.5vh, 28px); 
@@ -103,7 +133,9 @@
             min-height: 70px;
         }
 
-        /* زر إعادة العرض المتجاوب */
+        /* =========================================
+           9. زر إعادة عرض السحب (للمتأخرين)
+           ========================================= */
         #replayBtn {
             display: none;
             background: var(--primary);
@@ -124,6 +156,9 @@
             background: #1e2e33;
         }
 
+        /* =========================================
+           10. مقاسات شعارات الرعاة (رياش ونسيل)
+           ========================================= */
         footer { 
             width: 100%; 
             display: flex; 
@@ -134,20 +169,27 @@
             border-top: 1px solid rgba(0,0,0,0.05);
         }
 
-        .sponsor { height: clamp(50px, 10vh, 90px); max-width: 40%; object-fit: contain; }
+        .sponsor { 
+            height: clamp(50px, 10vh, 90px); /* مقاس الشعارات السفلية */
+            max-width: 40%; 
+            object-fit: contain; 
+        }
     </style>
 </head>
 <body>
 
+    <!-- الجزء العلوي: سجل الفائزين -->
     <div class="winners-bar" id="log">
         <span style="margin-right: 20px; align-self: center; font-size: 13px; font-weight: bold;">🏆 سجل الفائزين:</span>
     </div>
 
+    <!-- الجزء الثاني: الشعارات -->
     <header>
         <img src="images/logo-sunnan.png" class="logo" alt="سنن">
         <img src="images/logo-contest.png" class="logo" alt="المسابقة">
     </header>
 
+    <!-- الجزء الثالث: العجلة وأدوات السحب -->
     <main>
         <div class="wheel-box">
             <img src="https://cdn-icons-png.flaticon.com/512/8154/8154865.png" id="pointer">
@@ -157,12 +199,16 @@
         <button id="replayBtn" onclick="startReplay()">🎡 إعادة عرض السحب المباشر</button>
     </main>
 
+    <!-- الجزء الرابع: الرعاة -->
     <footer>
         <img src="images/sponsor1.png" class="sponsor" alt="رياش">
         <img src="images/sponsor2.png" class="sponsor" alt="نسيل">
     </footer>
 
     <script>
+        // =========================================
+        // 11. إعدادات الربط مع محرك قوقل (SCRIPT_URL)
+        // =========================================
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvneLwdPpyxql5U5v5981SkdGqHrRrh9141U1hyHCfUBxgXoFmSndtUURFTUxdlUQ/exec";
         
         const canvas = document.getElementById('wheelCanvas');
@@ -173,35 +219,60 @@
         let names = [], prizes = [], pastWinners = [];
         let nRot = 0, pRot = 0, isSpinning = false;
 
+        // =========================================
+        // 12. وظائف الرسم داخل أداة الـ Canvas
+        // (تتحكم في شكل العجلة، نصف القطر، والزوايا)
+        // =========================================
         function draw() {
-            ctx.clearRect(0,0,1000,1000);
+            ctx.clearRect(0,0,1000,1000); // تنظيف اللوحة قبل كل رسمة جديدة للسلاسة
+            
+            // رسم العجلة الكبرى (الأسماء) - الدائرة الخارجية
+            // 480 هو نصف القطر الخارجي ، 320 نصف القطر الداخلي
             if (names.length > 0) drawW(names, 480, 320, nRot, ["#2A3F46", "#7D7168"], true);
+            
+            // رسم العجلة الصغرى (الجوائز) - الدائرة الداخلية
+            // 310 هو نصف القطر الخارجي ، 10 نصف القطر الداخلي
             if (prizes.length > 0) drawW(prizes, 310, 10, pRot, ["#C5B358", "#F3EFE9"], false);
         }
 
+        // وظيفة بناء الأقسام (Slices) داخل العجلة
         function drawW(items, outR, inR, rot, colors, isN) {
-            const cx = 500, cy = 500;
-            const slice = (Math.PI*2)/items.length;
+            const cx = 500, cy = 500; // مركز اللوحة (منتصف الـ 1000x1000)
+            const slice = (Math.PI*2)/items.length; // تقسيم الدائرة بناءً على عدد الأسماء
+            
             items.forEach((t, i) => {
-                const ang = i*slice + rot;
-                ctx.save(); ctx.beginPath(); ctx.fillStyle = colors[i%colors.length];
-                ctx.moveTo(cx, cy); ctx.arc(cx, cy, outR, ang, ang+slice); ctx.fill();
-                ctx.translate(cx, cy); ctx.rotate(ang + slice/2);
+                const ang = i*slice + rot; // زاوية البداية لكل قسم + الدوران الحالي
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.fillStyle = colors[i%colors.length]; // تبديل الألوان بين الأقسام
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, outR, ang, ang+slice); // رسم القوس الخارجي
+                ctx.fill();
+                
+                // كتابة النص داخل القسم
+                ctx.translate(cx, cy); // الانتقال للمركز
+                ctx.rotate(ang + slice/2); // تدوير اللوحة لكتابة النص في منتصف القسم
                 ctx.fillStyle = (colors[i%colors.length]==="#F3EFE9")?"#2A3F46":"white";
                 ctx.textAlign = "right";
+                
+                // تعديل حجم الخط (الأسماء أصغر 20px والجوائز أكبر 28px)
                 ctx.font = isN ? "bold 20px Arial" : "bold 28px Arial";
+                
+                // كتابة الاسم مع قص النصوص الطويلة جداً لضمان المظهر
                 ctx.fillText(t.length > 18 ? t.substring(0, 16) + '..' : t, outR - 40, 10);
                 ctx.restore();
             });
         }
 
-        // مزامنة البيانات والتحقق من وجود سحب سابق
+        // =========================================
+        // 13. مزامنة البيانات والتحقق من الحالة
+        // =========================================
         async function syncData() {
             try {
                 const [qRes, pRes, wRes] = await Promise.all([
                     fetch(`${SCRIPT_URL}?action=getQualified`).then(r => r.json()),
                     fetch(`${SCRIPT_URL}?action=getPrizes`).then(r => r.json()),
-                    // نفترض وجود أكشن لجلب الفائزين المسجلين في الشيت
                     fetch(`${SCRIPT_URL}?action=getWinnersList`).then(r => r.json()).catch(() => [])
                 ]);
                 
@@ -209,7 +280,7 @@
                 initialPrizes = [...pRes, ...wRes.map(w => w.prize)];
                 pastWinners = wRes;
 
-                // إذا وجدنا فائزين سابقين ولم نكن في "بث مباشر" الآن، نظهر زر الإعادة
+                // إذا وجدنا فائزين سابقين، نُفعل وضع "إعادة العرض"
                 if (pastWinners.length > 0) {
                     document.getElementById('replayBtn').style.display = 'block';
                     document.getElementById('announcement').innerText = "تم السحب مسبقاً، يمكنك مشاهدة الإعادة";
@@ -218,48 +289,59 @@
                 names = [...initialNames];
                 prizes = [...initialPrizes];
                 draw();
-            } catch (e) { console.log("خطأ في المزامنة"); }
+            } catch (e) { console.log("خطأ في المزامنة مع قوقل"); }
         }
 
+        // =========================================
+        // 14. منطق إعادة العرض (Replay) التلقائي
+        // =========================================
         async function startReplay() {
             document.getElementById('replayBtn').style.display = 'none';
             document.getElementById('log').innerHTML = '<span style="margin-right: 20px; align-self: center; font-size: 13px; font-weight: bold;">🏆 سجل الفائزين:</span>';
             
-            // إعادة تصفير العجلة للحالة الأولى
             names = [...initialNames];
             prizes = [...initialPrizes];
             
+            // تنفيذ السحب لكل فائز بالترتيب الأصلي
             for (let winnerObj of pastWinners) {
                 const wIdx = names.indexOf(winnerObj.name);
                 const pIdx = prizes.indexOf(winnerObj.prize);
                 
                 if (wIdx !== -1 && pIdx !== -1) {
                     await performSpin({ winner: winnerObj.name, prize: winnerObj.prize, wIdx, pIdx });
-                    // انتظار قصير بين كل سحب وسحب
-                    await new Promise(r => setTimeout(r, 2000));
+                    await new Promise(r => setTimeout(r, 2000)); // انتظار بين كل فائز
                 }
             }
             document.getElementById('announcement').innerText = "هذه كانت نتائج سحب اليوم، نبارك للفائزين!";
         }
 
+        // =========================================
+        // 15. منطق دوران العجلة والتحكم في الزوايا
+        // =========================================
         function performSpin(data) {
             return new Promise((resolve) => {
                 isSpinning = true;
                 const start = performance.now();
-                const duration = 5000; // تقليل مدة الدوران في الإعادة قليلاً للسرعة
+                const duration = 5000; // مدة الدوران (5 ثواني)
+                
+                // حساب الزاوية المستهدفة ليقف الفائز تحت السهم بالضبط
                 const nTarget = (Math.PI*20) + ((names.length-data.wIdx)*(Math.PI*2/names.length)) - (Math.PI/2) - (Math.PI/names.length);
                 const pTarget = -(Math.PI*15) - ((prizes.length-data.pIdx)*(Math.PI*2/prizes.length)) + (Math.PI/2) + (Math.PI/prizes.length);
 
                 function anim(now) {
                     const p = Math.min((now-start)/duration, 1);
-                    const ease = 1 - Math.pow(1-p, 4);
+                    const ease = 1 - Math.pow(1-p, 4); // معادلة التباطؤ السلس
                     nRot = ease * nTarget; pRot = ease * pTarget;
                     draw();
-                    if(p<1) requestAnimationFrame(anim);
-                    else {
+                    
+                    if(p<1) {
+                        requestAnimationFrame(anim);
+                    } else {
                         isSpinning = false;
                         document.getElementById('announcement').innerHTML = `🎉 الفائز: <span style="color:#C5B358">${data.winner}</span> <br> الجائزة: ${data.prize}`;
                         addWinnerToBar(data.winner, data.prize);
+                        
+                        // حذف الفائز من العجلة الحالية
                         names.splice(data.wIdx, 1); prizes.splice(data.pIdx, 1);
                         setTimeout(() => { draw(); resolve(); }, 800);
                     }
@@ -275,6 +357,9 @@
             document.getElementById('log').prepend(tag);
         }
 
+        // =========================================
+        // 16. استقبال الأوامر من لوحة التحكم (Broadcast)
+        // =========================================
         bc.onmessage = (e) => {
             if(e.data.type === 'INIT') { names = e.data.qualified; prizes = e.data.prizes; draw(); }
             if(e.data.type === 'SPIN' && !isSpinning) {
@@ -290,4 +375,3 @@
     </script>
 </body>
 </html>
-
