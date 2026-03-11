@@ -35,13 +35,13 @@
 <body class="flex flex-col h-screen w-full overflow-hidden">
 
     <header class="flex-none bg-white border-b border-[#7D7168]/20 px-8 py-4 flex justify-between items-center shadow-md z-50">
-        <img src="images/logo-sunnan.png" class="h-20 md:h-24 w-auto object-contain" alt="شعار جمعية سنن" onerror="this.src='https://placehold.co/200x80/2A3F46/FFFFFF?text=Sunnan'">
+        <img src="images/logo-sunnan.png" class="h-20 md:h-24 w-auto object-contain" alt="شعار جمعية سنن">
         <div class="text-center">
             <h1 class="text-2xl md:text-4xl font-black text-[#2A3F46]">مسابقة أعلام السنة</h1>
             <div class="h-1.5 w-32 bg-[#C5B358] mx-auto rounded-full mt-2"></div>
             <p class="text-[#7D7168] font-bold mt-2 text-sm md:text-base">البث المباشر للسحب</p>
         </div>
-        <img src="images/logo-contest.png" class="h-20 md:h-24 w-auto object-contain" alt="شعار المسابقة" onerror="this.src='https://placehold.co/200x80/C5B358/FFFFFF?text=Contest'">
+        <img src="images/logo-contest.png" class="h-20 md:h-24 w-auto object-contain" alt="شعار المسابقة">
     </header>
 
     <main class="flex-1 min-h-0 flex overflow-hidden p-6 gap-6 relative w-full">
@@ -64,7 +64,8 @@
         <section class="flex-1 min-h-0 flex flex-col items-center justify-center relative bg-[#2A3F46]/5 rounded-[40px] border-4 border-dashed border-[#7D7168]/20 p-10 text-center overflow-hidden">
             <div id="loadingStatus" class="text-[#7D7168] text-xl font-bold animate-pulse">جاري جلب قائمة المشاركين...</div>
 
-            <div id="giftContainer" onclick="testSpin()" class="hidden relative cursor-pointer group transition-transform duration-500 hover:scale-110">
+            <!-- تمت إزالة خاصية النقر التجريبية، الصندوق الآن يستجيب فقط للأدمن -->
+            <div id="giftContainer" class="hidden relative group transition-transform duration-500 hover:scale-110">
                 <svg width="320" height="320" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-2xl">
                     <rect x="40" y="80" width="160" height="130" rx="8" fill="#7D7168" />
                     <rect x="30" y="60" width="180" height="40" rx="4" fill="#8C847D" />
@@ -75,7 +76,7 @@
                     <ellipse cx="120" cy="225" rx="90" ry="12" fill="black" fill-opacity="0.1" />
                 </svg>
                 <div id="shakeMessage" class="absolute -top-16 left-1/2 -translate-x-1/2 bg-[#C5B358] text-white px-10 py-3 rounded-full font-black shadow-2xl hidden whitespace-nowrap">🎁 جاري اختيار الفائز...</div>
-                <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 text-[#7D7168] font-bold text-lg opacity-80 whitespace-nowrap">اضغط لتجربة السحب (وهمي)</div>
+                <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 text-[#7D7168] font-bold text-lg opacity-80 whitespace-nowrap">بانتظار إشارة السحب من الإدارة</div>
             </div>
 
             <div id="winnerCard" class="hidden scale-in flex flex-col items-center z-50">
@@ -114,11 +115,12 @@
         <div class="flex items-center gap-5 border-l-4 border-[#F3EFE9] pl-12">
             <span class="text-sm font-black text-[#8C847D] uppercase tracking-[0.2em]">شركاء النجاح</span>
         </div>
-        <img src="images/sponsor1.png" class="sponsor-img h-12 md:h-16 w-auto object-contain" alt="الراعي الأول" onerror="this.src='https://placehold.co/150x60/F3EFE9/8C847D?text=Sponsor+1'">
-        <img src="images/sponsor2.png" class="sponsor-img h-12 md:h-16 w-auto object-contain" alt="الراعي الثاني" onerror="this.src='https://placehold.co/150x60/F3EFE9/8C847D?text=Sponsor+2'">
+        <img src="images/sponsor1.png" class="sponsor-img h-12 md:h-16 w-auto object-contain" alt="الراعي الأول">
+        <img src="images/sponsor2.png" class="sponsor-img h-12 md:h-16 w-auto object-contain" alt="الراعي الثاني">
     </footer>
 
     <script>
+        // تم وضع الرابط الرسمي الخاص بك
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-7u8HBhEOPz2kOf_efcDDaOFt4R4Hw4Ld7NJvf7xzyGkpEpGU3b2FVsPlIC_a-gd-/exec";
         const bc = new BroadcastChannel('sunnan_channel');
         
@@ -145,11 +147,9 @@
                 ]);
                 participants = qRes || [];
                 winners = wRes || [];
-                if(participants.length === 0) throw new Error("لا يوجد مشاركين");
             } catch (e) {
-                // بيانات تجريبية تعمل تلقائياً إذا الشيت فارغ لكي تتمكن من تجربة شريط التمرير
-                participants = Array.from({length: 45}, (_, i) => `مشارك تجريبي رقم ${i + 1}`);
-                winners = [];
+                console.error("خطأ في الاتصال بالسيرفر:", e);
+                // تمت إزالة البيانات الوهمية
             }
 
             updateUI();
@@ -203,12 +203,6 @@
         }
         animate();
 
-        function testSpin() {
-            if (participants.length === 0) return;
-            const randomName = participants[Math.floor(Math.random() * participants.length)];
-            performExplosion({ name: randomName, prize: "جائزة تجريبية" });
-        }
-
         async function performExplosion(winnerData) {
             const gift = document.getElementById('giftContainer'), msg = document.getElementById('shakeMessage'), btn = document.getElementById('replayBtn');
             btn.classList.add('hidden'); gift.classList.add('animate-shake'); msg.classList.remove('hidden');
@@ -254,4 +248,3 @@
     </script>
 </body>
 </html>
-
