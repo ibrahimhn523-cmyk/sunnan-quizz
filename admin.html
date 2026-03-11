@@ -2,52 +2,171 @@
 <html dir="rtl" lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة تحكم المسابقة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المسابقة | جمعية سنن</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial; background: #eee; padding: 20px; text-align: center; }
-        .panel { background: white; max-width: 500px; margin: auto; padding: 30px; border-radius: 10px; }
-        button { padding: 15px 30px; background: #2A3F46; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 20px; }
+        /* إضافة نفس الخطوط المستخدمة في صفحة العرض لتوحيد الهوية */
+        @font-face { font-family: 'CustomFont'; src: url('fonts/TheYearofHandicrafts-Regular.otf') format('opentype'); font-weight: 400; }
+        @font-face { font-family: 'CustomFont'; src: url('fonts/TheYearofHandicrafts-Bold.otf') format('opentype'); font-weight: 700; }
+        @font-face { font-family: 'CustomFont'; src: url('fonts/TheYearofHandicrafts-Black.otf') format('opentype'); font-weight: 900; }
+
+        body { font-family: 'CustomFont', 'Tajawal', sans-serif; background-color: #F3EFE9; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body>
-    <div id="login-panel" class="panel">
-        <h2>دخول المتحكم</h2>
-        <input type="password" id="pass" placeholder="كلمة المرور">
-        <button onclick="login()">دخول</button>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- 1. شاشة تسجيل الدخول -->
+    <div id="login-panel" class="bg-white p-8 rounded-[30px] shadow-2xl w-full max-w-md border-t-8 border-[#2A3F46] text-center fade-in">
+        <img src="images/logo-sunnan.png" class="h-16 mx-auto mb-6" alt="شعار سنن" onerror="this.src='https://placehold.co/150x60/2A3F46/FFFFFF?text=Sunnan'">
+        <h2 class="text-2xl font-black text-[#2A3F46] mb-2">غرفة التحكم الآمنة</h2>
+        <p class="text-[#7D7168] text-sm font-bold mb-6">أدخل كلمة المرور للوصول إلى نظام السحب</p>
+        
+        <input type="password" id="pass" placeholder="كلمة المرور..." class="w-full bg-[#F3EFE9] border border-[#7D7168]/30 rounded-xl px-4 py-3 text-center mb-6 focus:outline-none focus:border-[#C5B358] focus:ring-2 focus:ring-[#C5B358]/50 transition-all font-sans" onkeypress="if(event.key === 'Enter') login()">
+        
+        <button onclick="login()" class="w-full bg-[#2A3F46] hover:bg-[#1a282c] text-white font-bold py-3 rounded-xl shadow-lg transition-transform hover:scale-105 active:scale-95">
+            تسجيل الدخول
+        </button>
+        <p id="login-error" class="text-red-500 font-bold mt-4 hidden">كلمة المرور غير صحيحة!</p>
     </div>
 
-    <div id="admin-panel" class="panel" style="display:none;">
-        <h2>بدء السحب اليومي</h2>
-        <div id="stats">جاري جلب المتأهلين...</div>
-        <br>
-        <button id="spinBtn" onclick="triggerSpin()">إطلاق العجلة الآن 🎡</button>
+    <!-- 2. لوحة التحكم الرئيسية (تظهر بعد تسجيل الدخول) -->
+    <div id="admin-panel" class="hidden bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-xl border-4 border-[#C5B358]/30 fade-in">
+        <div class="text-center mb-8 border-b border-[#F3EFE9] pb-6">
+            <h2 class="text-3xl font-black text-[#2A3F46] mb-2">لوحة إدارة السحب 🎛️</h2>
+            <div id="status-text" class="text-[#C5B358] font-bold text-sm">جاري جلب البيانات من النظام...</div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="bg-[#F3EFE9] p-4 rounded-2xl text-center border border-[#7D7168]/10">
+                <span class="block text-[#8C847D] text-xs font-black uppercase mb-1">المتأهلون للسحب</span>
+                <span id="stats" class="text-3xl font-black text-[#2A3F46]">0</span>
+            </div>
+            <div class="bg-[#F3EFE9] p-4 rounded-2xl text-center border border-[#7D7168]/10">
+                <span class="block text-[#8C847D] text-xs font-black uppercase mb-1">الجوائز المتبقية</span>
+                <span id="prizes-stats" class="text-3xl font-black text-[#C5B358]">0</span>
+            </div>
+        </div>
+        
+        <button id="spinBtn" onclick="triggerSpin()" disabled class="w-full bg-[#C5B358] hover:bg-[#b09e4a] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black py-5 rounded-2xl shadow-xl transition-all hover:scale-105 active:scale-95 text-xl flex items-center justify-center gap-3">
+            <span>إطلاق السحب الآن 🎁</span>
+        </button>
+
+        <div class="mt-8">
+            <h3 class="font-bold text-[#2A3F46] mb-3 border-b border-[#F3EFE9] pb-2">سجل السحوبات في هذه الجلسة:</h3>
+            <ul id="session-winners" class="space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar text-sm">
+                <li class="text-[#7D7168] italic text-center text-xs">لم يتم سحب أي فائز بعد.</li>
+            </ul>
+        </div>
     </div>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-7u8HBhEOPz2kOf_efcDDaOFt4R4Hw4Ld7NJvf7xzyGkpEpGU3b2FVsPlIC_a-gd-/exec";
-        const bc = new BroadcastChannel('wheel_control');
+        
+        // ⚠️ التعديل 1: توحيد اسم قناة الاتصال لتتطابق مع صفحة العرض
+        const bc = new BroadcastChannel('sunnan_channel'); 
+        
+        let participants = [];
+        let prizes = [];
+        let adminPassword = "";
 
         function login() {
-            if(document.getElementById('pass').value === 'admin-sunnan1212') {
+            const passInput = document.getElementById('pass').value;
+            if(passInput === 'admin-sunnan1212') {
+                adminPassword = passInput;
                 document.getElementById('login-panel').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
                 loadData();
-            } else { alert("كلمة المرور خطأ"); }
+            } else { 
+                document.getElementById('login-error').classList.remove('hidden');
+            }
         }
 
-        function loadData() {
-            fetch(`${SCRIPT_URL}?action=getQualified`)
-                .then(res => res.json())
-                .then(names => {
-                    document.getElementById('stats').innerText = `عدد المتأهلين (إجابات صحيحة وبدون تكرار): ${names.length}`;
+        async function loadData() {
+            try {
+                // ⚠️ التعديل 2: جلب المتأهلين والجوائز معاً
+                const [qRes, pRes] = await Promise.all([
+                    fetch(`${SCRIPT_URL}?action=getQualified`).then(r => r.json()),
+                    fetch(`${SCRIPT_URL}?action=getPrizes`).then(r => r.json())
+                ]);
+                
+                participants = qRes || [];
+                prizes = pRes || [];
+
+                document.getElementById('stats').innerText = participants.length;
+                document.getElementById('prizes-stats').innerText = prizes.length;
+                document.getElementById('status-text').innerText = "✅ النظام جاهز ومربوط بقاعدة البيانات";
+                
+                if(participants.length > 0) {
+                    document.getElementById('spinBtn').disabled = false;
+                } else {
+                    document.getElementById('status-text').innerText = "⚠️ لا يوجد متأهلين للسحب";
+                }
+            } catch (e) {
+                document.getElementById('status-text').innerText = "❌ فشل الاتصال بقاعدة البيانات";
+                console.error("Error loading data:", e);
+            }
+        }
+
+        async function triggerSpin() {
+            if (participants.length === 0) {
+                alert("انتهت الأسماء المتأهلة!");
+                return;
+            }
+
+            const btn = document.getElementById('spinBtn');
+            btn.disabled = true;
+            btn.innerHTML = "جاري تنفيذ السحب ⏳...";
+
+            // ⚠️ التعديل 3: اختيار عشوائي حقيقي للفائز والجائزة
+            const randomWinnerIndex = Math.floor(Math.random() * participants.length);
+            const winnerName = participants[randomWinnerIndex];
+            
+            // سحب جائزة (بالترتيب من القائمة) أو وضع جائزة افتراضية
+            const prizeName = prizes.length > 0 ? prizes.shift() : "جائزة التميز 🎁";
+            
+            // إزالة الفائز من القائمة المحلية حتى لا يتكرر في السحبات القادمة
+            participants.splice(randomWinnerIndex, 1);
+
+            // ⚠️ التعديل 4: إرسال الأمر بالصيغة الصحيحة التي تقرأها صفحة العرض (wheel.html)
+            bc.postMessage({ type: 'SPIN', winner: winnerName, prize: prizeName });
+
+            // ⚠️ التعديل 5: تسجيل الفائز رسمياً في Google Sheets للحفظ الدائم
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'recordWinner',
+                        password: adminPassword,
+                        winnerName: winnerName,
+                        prizeName: prizeName
+                    })
                 });
-        }
+            } catch (error) {
+                console.error("لم يتم حفظ الفائز في قوقل شيت", error);
+            }
 
-        function triggerSpin() {
-            // كود اختيار فائز عشوائي وإرساله لصفحة العرض
-            bc.postMessage({ action: 'spin', winner: 'فائز عشوائي', prize: 'جائزة عشوائية' });
+            // تحديث الواجهة للأدمن
+            document.getElementById('stats').innerText = participants.length;
+            document.getElementById('prizes-stats').innerText = prizes.length;
+            
+            const sessionList = document.getElementById('session-winners');
+            if (sessionList.innerText.includes("لم يتم")) sessionList.innerHTML = "";
+            sessionList.innerHTML = `<li class="bg-[#F3EFE9] p-2 rounded text-[#2A3F46] font-bold border-r-4 border-[#C5B358] mb-1">🎉 ${winnerName} - <span class="text-[#7D7168]">${prizeName}</span></li>` + sessionList.innerHTML;
+
+            // إيقاف الزر لـ 5 ثوانٍ حتى تنتهي حركة الصندوق في شاشة العرض
+            setTimeout(() => {
+                if (participants.length > 0) {
+                    btn.disabled = false;
+                    btn.innerHTML = "إطلاق السحب الآن 🎁";
+                } else {
+                    btn.innerHTML = "انتهى السحب";
+                }
+            }, 5000);
         }
     </script>
 </body>
-
 </html>
