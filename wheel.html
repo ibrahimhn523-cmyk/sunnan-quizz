@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سحب جمعية سنن | صندوق الهدايا</title>
+    <title>سحب جمعية سنن | أعلام السنة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #F3EFE9; overflow: hidden; }
+        body { font-family: 'Tajawal', sans-serif; background-color: #F3EFE9; }
         
-        /* تصميم شريط التمرير النحيف */
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #7D7168; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #2A3F46; }
 
-        /* حركة الاهتزاز للصندوق */
         @keyframes shake {
             0%, 100% { transform: translate(0, 0) rotate(0deg); }
             25% { transform: translate(-8px, 5px) rotate(-3deg); }
@@ -24,129 +22,110 @@
         }
         .animate-shake { animation: shake 0.2s infinite; }
 
-        /* حركات الظهور */
-        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
         .scale-in { animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes scaleIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* تأثيرات الألوان للرعاة */
-        .sponsor-img { transition: all 0.3s ease; filter: grayscale(100%); opacity: 0.6; }
-        .sponsor-img:hover { filter: grayscale(0%); opacity: 1; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .sponsor-img { transition: all 0.3s ease; filter: grayscale(100%); opacity: 0.7; }
+        .sponsor-img:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.05); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="flex flex-col h-screen w-full overflow-hidden">
 
-    <!-- 1. الهيدر والشعارات -->
-    <header class="bg-white/90 backdrop-blur-sm border-b border-[#7D7168]/20 p-4 flex justify-between items-center shadow-sm z-50">
-        <img src="images/logo-sunnan.png" class="h-12 md:h-16 object-contain" alt="شعار سنن" onerror="this.src='https://placehold.co/150x60?text=Sunnan'">
+    <header class="flex-none bg-white border-b border-[#7D7168]/20 px-8 py-4 flex justify-between items-center shadow-md z-50">
+        <img src="images/logo-sunnan.png" class="h-20 md:h-24 w-auto object-contain" alt="شعار جمعية سنن" onerror="this.src='https://placehold.co/200x80/2A3F46/FFFFFF?text=Sunnan'">
         <div class="text-center">
-            <h1 class="text-xl md:text-2xl font-black text-[#2A3F46]">مسابقة أعلام السنة</h1>
-            <div class="h-1 w-16 bg-[#C5B358] mx-auto rounded-full mt-1"></div>
+            <h1 class="text-2xl md:text-4xl font-black text-[#2A3F46]">مسابقة أعلام السنة</h1>
+            <div class="h-1.5 w-32 bg-[#C5B358] mx-auto rounded-full mt-2"></div>
+            <p class="text-[#7D7168] font-bold mt-2 text-sm md:text-base">البث المباشر للسحب</p>
         </div>
-        <img src="images/logo-contest.png" class="h-12 md:h-16 object-contain" alt="شعار المسابقة" onerror="this.src='https://placehold.co/150x60?text=Contest'">
+        <img src="images/logo-contest.png" class="h-20 md:h-24 w-auto object-contain" alt="شعار المسابقة" onerror="this.src='https://placehold.co/200x80/C5B358/FFFFFF?text=Contest'">
     </header>
 
-    <main class="flex-1 flex flex-col md:flex-row p-4 gap-4 overflow-hidden relative">
-        <!-- كانفاس الانفجار (Confetti) -->
-        <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-40"></canvas>
+    <main class="flex-1 min-h-0 flex overflow-hidden p-6 gap-6 relative w-full">
+        <canvas id="confettiCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-40"></canvas>
 
-        <!-- 2. قائمة المشاركين (اليمين) -->
-        <aside class="hidden md:flex flex-col w-72 bg-white rounded-[30px] shadow-lg border border-[#7D7168]/10 overflow-hidden">
-            <div class="bg-[#2A3F46] p-4 text-white text-center">
-                <h3 class="font-bold flex items-center justify-center gap-2">
-                    <span>👥 المتأهلون</span>
-                    <span id="participantsCount" class="bg-[#C5B358] px-2 py-0.5 rounded-full text-[10px]">0</span>
+        <aside class="flex flex-col w-80 bg-white rounded-[40px] shadow-2xl border border-[#7D7168]/10 overflow-hidden h-full">
+            <div class="flex-none bg-[#2A3F46] p-6 text-white text-center">
+                <h3 class="font-bold text-xl flex items-center justify-center gap-3">
+                    <span>👤 المتأهلون</span>
+                    <span id="participantsCount" class="bg-[#C5B358] text-[#2A3F46] px-3 py-0.5 rounded-full text-sm font-black">0</span>
                 </h3>
             </div>
-            <div class="flex-1 overflow-y-auto custom-scrollbar">
+            <div class="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
                 <table class="w-full">
-                    <tbody id="participantsList" class="text-center">
-                        <!-- تضاف الأسماء هنا برمجياً -->
-                    </tbody>
+                    <tbody id="participantsList"></tbody>
                 </table>
             </div>
         </aside>
 
-        <!-- 3. منطقة السحب المركزية -->
-        <section class="flex-1 flex flex-col items-center justify-center relative bg-[#2A3F46]/5 rounded-[40px] border-2 border-dashed border-[#7D7168]/20 p-6 text-center">
-            
-            <div id="loadingStatus" class="text-[#7D7168] font-bold animate-pulse">جاري الاتصال بالنظام...</div>
+        <section class="flex-1 min-h-0 flex flex-col items-center justify-center relative bg-[#2A3F46]/5 rounded-[40px] border-4 border-dashed border-[#7D7168]/20 p-10 text-center overflow-hidden">
+            <div id="loadingStatus" class="text-[#7D7168] text-xl font-bold animate-pulse">جاري جلب قائمة المشاركين...</div>
 
-            <!-- حاوية الهدية -->
-            <div id="giftContainer" class="hidden relative cursor-pointer group transition-transform duration-300 hover:scale-105">
-                <!-- SVG صندوق الهدية الفاخر -->
-                <svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-2xl">
+            <div id="giftContainer" onclick="testSpin()" class="hidden relative cursor-pointer group transition-transform duration-500 hover:scale-110">
+                <svg width="320" height="320" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-2xl">
                     <rect x="40" y="80" width="160" height="130" rx="8" fill="#7D7168" />
                     <rect x="30" y="60" width="180" height="40" rx="4" fill="#8C847D" />
                     <rect x="110" y="60" width="20" height="150" fill="#F3EFE9" />
                     <path d="M120 60C120 60 160 20 180 40C200 60 140 60 120 60Z" fill="#F3EFE9" stroke="#8C847D" stroke-width="2"/>
                     <path d="M120 60C120 60 80 20 60 40C40 60 100 60 120 60Z" fill="#F3EFE9" stroke="#8C847D" stroke-width="2"/>
                     <circle cx="120" cy="60" r="12" fill="#F3EFE9" stroke="#8C847D" stroke-width="2"/>
-                    <ellipse cx="120" cy="225" rx="80" ry="10" fill="black" fill-opacity="0.1" />
+                    <ellipse cx="120" cy="225" rx="90" ry="12" fill="black" fill-opacity="0.1" />
                 </svg>
-                <div id="shakeMessage" class="absolute -top-12 left-1/2 -translate-x-1/2 bg-[#C5B358] text-white px-6 py-2 rounded-full font-bold shadow-lg hidden whitespace-nowrap">جاري السحب الآن...</div>
+                <div id="shakeMessage" class="absolute -top-16 left-1/2 -translate-x-1/2 bg-[#C5B358] text-white px-10 py-3 rounded-full font-black shadow-2xl hidden whitespace-nowrap">🎁 جاري اختيار الفائز...</div>
+                <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 text-[#7D7168] font-bold text-lg opacity-80 whitespace-nowrap">اضغط لتجربة السحب (وهمي)</div>
             </div>
 
-            <!-- بطاقة الفائز -->
             <div id="winnerCard" class="hidden scale-in flex flex-col items-center z-50">
-                <div class="bg-white p-8 md:p-12 rounded-[50px] shadow-2xl border-b-[10px] border-[#C5B358] text-center max-w-sm w-full">
-                    <div class="bg-[#C5B358]/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#C5B358]">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                <div class="bg-white p-12 md:p-16 rounded-[60px] shadow-2xl border-b-[12px] border-[#C5B358] text-center max-w-lg w-full">
+                    <div class="bg-[#C5B358]/10 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 text-[#C5B358]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
                     </div>
-                    <span class="text-xs font-black text-[#8C847D] tracking-[0.2em] uppercase mb-2 block">المشارك الفائز</span>
-                    <h2 id="winnerName" class="text-3xl md:text-4xl font-black text-[#2A3F46] mb-6 leading-tight">...</h2>
-                    <div class="bg-[#F3EFE9] py-4 px-6 rounded-2xl">
-                        <span id="winnerPrize" class="text-xl md:text-2xl font-bold text-[#7D7168]">...</span>
+                    <span class="text-sm font-black text-[#8C847D] tracking-[0.4em] uppercase mb-4 block">المشارك الفائز</span>
+                    <h2 id="winnerName" class="text-4xl md:text-5xl font-black text-[#2A3F46] mb-8 leading-tight">...</h2>
+                    <div class="bg-[#F3EFE9] py-5 px-8 rounded-[25px]">
+                        <span id="winnerPrize" class="text-2xl md:text-3xl font-bold text-[#7D7168]">...</span>
                     </div>
                 </div>
-                <button onclick="resetView()" class="mt-8 bg-[#2A3F46] text-white px-8 py-3 rounded-full font-bold hover:bg-[#1e2e33] transition-all flex items-center gap-2">
-                    🔄 العودة للسحب
+                <button onclick="resetView()" class="mt-10 bg-[#2A3F46] text-white px-10 py-4 rounded-full font-bold hover:bg-[#1e2e33] transition-all flex items-center gap-4 shadow-xl text-lg">
+                    <span>🔄 العودة للصندوق</span>
                 </button>
             </div>
 
-            <!-- زر الإعادة -->
-            <button id="replayBtn" onclick="startReplay()" class="absolute bottom-8 left-1/2 -translate-x-1/2 hidden flex items-center gap-2 bg-white px-6 py-3 rounded-2xl shadow-md border border-[#C5B358] text-[#2A3F46] font-bold hover:bg-[#F3EFE9] transition-all">
-                ▶️ إعادة عرض السحب المباشر
+            <button id="replayBtn" onclick="startReplay()" class="absolute bottom-10 left-1/2 -translate-x-1/2 hidden flex items-center gap-4 bg-white px-10 py-4 rounded-3xl shadow-2xl border-2 border-[#C5B358] text-[#2A3F46] font-black hover:scale-105 transition-all text-lg z-50">
+                <span>▶️ إعادة عرض السحب</span>
             </button>
         </section>
 
-        <!-- 4. سجل الفائزين (اليسار) -->
-        <aside class="hidden lg:flex flex-col w-72 bg-white rounded-3xl shadow-lg border border-[#C5B358]/20 overflow-hidden">
-            <div class="bg-[#C5B358] p-4 text-[#2A3F46] text-center">
-                <h3 class="font-bold flex items-center justify-center gap-2">
+        <aside class="flex flex-col w-80 bg-white rounded-[40px] shadow-2xl border border-[#C5B358]/30 overflow-hidden h-full">
+            <div class="flex-none bg-[#C5B358] p-6 text-[#2A3F46] text-center">
+                <h3 class="font-bold text-xl flex items-center justify-center gap-3">
                     <span>🏆 سجل الفائزين</span>
-                    <span id="winnersCount" class="bg-[#2A3F46] text-white px-2 py-0.5 rounded-full text-[10px]">0</span>
+                    <span id="winnersCount" class="bg-[#2A3F46] text-white px-3 py-0.5 rounded-full text-sm font-black">0</span>
                 </h3>
             </div>
-            <div id="winnersList" class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-3">
-                <!-- تضاف البطاقات هنا برمجياً -->
-            </div>
+            <div id="winnersList" class="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-5 space-y-4"></div>
         </aside>
     </main>
 
-    <!-- 5. شعارات الرعاة (الفوتر) -->
-    <footer class="bg-white p-3 flex justify-center items-center gap-12 border-t border-[#7D7168]/10">
-        <span class="text-[10px] font-bold text-[#8C847D] uppercase tracking-widest ml-4">شركاء النجاح:</span>
-        <img src="images/sponsor1.png" class="sponsor-img h-8 md:h-12" alt="راعي 1" onerror="this.src='https://placehold.co/100x40?text=Sponsor+1'">
-        <img src="images/sponsor2.png" class="sponsor-img h-8 md:h-12" alt="راعي 2" onerror="this.src='https://placehold.co/100x40?text=Sponsor+2'">
+    <footer class="flex-none bg-white border-t border-[#7D7168]/15 px-12 py-5 flex justify-center items-center gap-16 shadow-inner z-50">
+        <div class="flex items-center gap-5 border-l-4 border-[#F3EFE9] pl-12">
+            <span class="text-sm font-black text-[#8C847D] uppercase tracking-[0.2em]">شركاء النجاح</span>
+        </div>
+        <img src="images/sponsor1.png" class="sponsor-img h-12 md:h-16 w-auto object-contain" alt="الراعي الأول" onerror="this.src='https://placehold.co/150x60/F3EFE9/8C847D?text=Sponsor+1'">
+        <img src="images/sponsor2.png" class="sponsor-img h-12 md:h-16 w-auto object-contain" alt="الراعي الثاني" onerror="this.src='https://placehold.co/150x60/F3EFE9/8C847D?text=Sponsor+2'">
     </footer>
 
     <script>
-        /**
-         * ============================================================
-         * إعدادات المحرك والبيانات
-         * ============================================================
-         */
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-7u8HBhEOPz2kOf_efcDDaOFt4R4Hw4Ld7NJvf7xzyGkpEpGU3b2FVsPlIC_a-gd-/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvneLwdPpyxql5U5v5981SkdGqHrRrh9141U1hyHCfUBxgXoFmSndtUURFTUxdlUQ/exec";
         const bc = new BroadcastChannel('sunnan_channel');
         
         let participants = [];
         let winners = [];
         let isReplaying = false;
 
-        // إعداد الكانفاس للجزيئات
         const canvas = document.getElementById('confettiCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -158,158 +137,117 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        /**
-         * جلب البيانات من قوقل شيت
-         */
         async function fetchData() {
             try {
                 const [qRes, wRes] = await Promise.all([
                     fetch(`${SCRIPT_URL}?action=getQualified`).then(r => r.json()),
                     fetch(`${SCRIPT_URL}?action=getWinnersList`).then(r => r.json()).catch(() => [])
                 ]);
-                
                 participants = qRes || [];
                 winners = wRes || [];
-                
-                updateUI();
-                document.getElementById('loadingStatus').classList.add('hidden');
-                document.getElementById('giftContainer').classList.remove('hidden');
-                
-                if (winners.length > 0) {
-                    document.getElementById('replayBtn').classList.remove('hidden');
-                }
+                if(participants.length === 0) throw new Error("لا يوجد مشاركين");
             } catch (e) {
-                console.error("خطأ في البيانات", e);
+                // بيانات تجريبية تعمل تلقائياً إذا الشيت فارغ لكي تتمكن من تجربة شريط التمرير
+                participants = Array.from({length: 45}, (_, i) => `مشارك تجريبي رقم ${i + 1}`);
+                winners = [];
             }
+
+            updateUI();
+            document.getElementById('loadingStatus').classList.add('hidden');
+            document.getElementById('giftContainer').classList.remove('hidden');
+            if (winners.length > 0) document.getElementById('replayBtn').classList.remove('hidden');
         }
 
-        /**
-         * تحديث القوائم الجانبية
-         */
         function updateUI() {
-            // تحديث المشاركين
             const pList = document.getElementById('participantsList');
             pList.innerHTML = participants.map((p, i) => `
-                <tr class="border-b border-[#F3EFE9] hover:bg-[#F3EFE9] transition-colors">
-                    <td class="p-3 text-[10px] text-[#8C847D] w-10">${i + 1}</td>
-                    <td class="p-3 font-medium text-sm text-center">${p}</td>
+                <tr class="border-b border-[#F3EFE9] hover:bg-[#F3EFE9]/80 transition-colors">
+                    <td class="p-4 text-[12px] text-[#8C847D] w-12 text-center font-bold">${i + 1}</td>
+                    <td class="p-4 font-bold text-base text-[#2A3F46] text-center">${p}</td>
                 </tr>
             `).join('');
             document.getElementById('participantsCount').innerText = participants.length;
 
-            // تحديث الفائزين
             const wList = document.getElementById('winnersList');
             wList.innerHTML = winners.slice().reverse().map(w => `
-                <div class="bg-[#F3EFE9] p-3 rounded-xl border-r-4 border-[#C5B358] fade-in">
-                    <div class="font-bold text-sm text-[#2A3F46]">${w.name}</div>
-                    <div class="text-xs text-[#7D7168] mt-1">${w.prize}</div>
+                <div class="bg-[#F3EFE9] p-4 rounded-2xl border-r-8 border-[#C5B358] shadow-sm fade-in">
+                    <div class="font-black text-base text-[#2A3F46]">${w.name}</div>
+                    <div class="text-xs font-bold text-[#7D7168] mt-2">${w.prize}</div>
                 </div>
             `).join('');
             document.getElementById('winnersCount').innerText = winners.length;
         }
 
-        /**
-         * منطق الانفجار والجزيئات
-         */
         function createParticles() {
             const colors = ['#C5B358', '#2A3F46', '#7D7168', '#FFFFFF', '#FFD700'];
-            for (let i = 0; i < 150; i++) {
+            for (let i = 0; i < 200; i++) {
                 particles.push({
-                    x: canvas.width / 2,
-                    y: canvas.height / 2,
-                    vx: (Math.random() - 0.5) * 20,
-                    vy: (Math.random() - 0.5) * 20 - 10,
-                    size: Math.random() * 8 + 2,
+                    x: canvas.width / 2, y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 35, vy: (Math.random() - 0.5) * 35 - 15,
+                    size: Math.random() * 10 + 3,
                     color: colors[Math.floor(Math.random() * colors.length)],
-                    life: 1,
-                    decay: Math.random() * 0.015 + 0.005
+                    life: 1, decay: Math.random() * 0.01 + 0.005
                 });
             }
         }
 
-        function animateParticles() {
+        function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach((p, i) => {
-                p.x += p.vx;
-                p.y += p.vy;
-                p.vy += 0.25;
-                p.life -= p.decay;
+                p.x += p.vx; p.y += p.vy; p.vy += 0.4; p.life -= p.decay;
                 if (p.life > 0) {
-                    ctx.globalAlpha = p.life;
-                    ctx.fillStyle = p.color;
-                    ctx.fillRect(p.x, p.y, p.size, p.size);
-                } else {
-                    particles.splice(i, 1);
-                }
+                    ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.size, p.size);
+                } else { particles.splice(i, 1); }
             });
-            requestAnimationFrame(animateParticles);
+            requestAnimationFrame(animate);
         }
-        animateParticles();
+        animate();
 
-        /**
-         * تنفيذ عملية السحب (Explosion)
-         */
+        function testSpin() {
+            if (participants.length === 0) return;
+            const randomName = participants[Math.floor(Math.random() * participants.length)];
+            performExplosion({ name: randomName, prize: "جائزة تجريبية" });
+        }
+
         async function performExplosion(winnerData) {
-            const gift = document.getElementById('giftContainer');
-            const msg = document.getElementById('shakeMessage');
-            
-            gift.classList.add('animate-shake');
-            msg.classList.remove('hidden');
-            
+            const gift = document.getElementById('giftContainer'), msg = document.getElementById('shakeMessage'), btn = document.getElementById('replayBtn');
+            btn.classList.add('hidden'); gift.classList.add('animate-shake'); msg.classList.remove('hidden');
             await new Promise(r => setTimeout(r, 2000));
-            
-            gift.classList.remove('animate-shake');
-            gift.classList.add('hidden');
-            msg.classList.add('hidden');
-            
+            gift.classList.remove('animate-shake'); gift.classList.add('hidden'); msg.classList.add('hidden');
             document.getElementById('winnerName').innerText = winnerData.name;
             document.getElementById('winnerPrize').innerText = winnerData.prize;
             document.getElementById('winnerCard').classList.remove('hidden');
-            
             createParticles();
-            
             if (!isReplaying) {
                 winners.push(winnerData);
                 participants = participants.filter(p => p !== winnerData.name);
                 updateUI();
+                if (winners.length > 0) btn.classList.remove('hidden');
             }
         }
 
         function resetView() {
             document.getElementById('winnerCard').classList.add('hidden');
             document.getElementById('giftContainer').classList.remove('hidden');
+            if (winners.length > 0 && !isReplaying) document.getElementById('replayBtn').classList.remove('hidden');
         }
 
-        /**
-         * استقبال أوامر التحكم (Admin)
-         */
         bc.onmessage = (e) => {
-            if (e.data.type === 'SPIN') {
-                performExplosion({ name: e.data.winner, prize: e.data.prize });
-            }
-            if (e.data.type === 'INIT') {
-                participants = e.data.qualified;
-                updateUI();
-            }
+            if (e.data.type === 'SPIN') performExplosion({ name: e.data.winner, prize: e.data.prize });
+            if (e.data.type === 'INIT') { participants = e.data.qualified; updateUI(); }
         };
 
-        /**
-         * إعادة العرض التاريخي
-         */
         async function startReplay() {
-            if (winners.length === 0) return;
+            if (winners.length === 0 || isReplaying) return;
             isReplaying = true;
             const originalWinners = [...winners];
-            winners = [];
-            updateUI();
-            document.getElementById('replayBtn').classList.add('hidden');
-            
+            winners = []; updateUI(); document.getElementById('replayBtn').classList.add('hidden');
             for (const w of originalWinners) {
                 await performExplosion(w);
                 await new Promise(r => setTimeout(r, 4000));
                 resetView();
             }
-            isReplaying = false;
+            winners = originalWinners; updateUI(); isReplaying = false;
         }
 
         window.onload = fetchData;
