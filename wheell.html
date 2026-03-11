@@ -7,7 +7,30 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #F3EFE9; }
+        /* تم ربط خطوط عام الحرف العربي بناءً على ملفاتك المرفوعة */
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('fonts/TheYearofHandicrafts-Regular.otf') format('opentype');
+            font-weight: 400; /* الوزن العادي */
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('fonts/TheYearofHandicrafts-Bold.otf') format('opentype');
+            font-weight: 700; /* الوزن العريض */
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('fonts/TheYearofHandicrafts-Black.otf') format('opentype');
+            font-weight: 900; /* الوزن العريض جداً (الأسود) */
+            font-style: normal;
+        }
+
+        /* سيتم استخدام الخط المرفوع أولاً، وإذا لم يعمل سيستخدم خط تجوال كاحتياطي */
+        body { font-family: 'CustomFont', 'Tajawal', sans-serif; background-color: #F3EFE9; }
         
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -37,7 +60,7 @@
     <header class="flex-none bg-white border-b border-[#7D7168]/20 px-8 py-4 flex justify-between items-center shadow-md z-50">
         <img src="images/logo-sunnan.png" class="h-20 md:h-24 w-auto object-contain" alt="شعار جمعية سنن">
         <div class="text-center">
-            <h1 class="text-2xl md:text-4xl font-black text-[#2A3F46]">مسابقة أعلام السنة</h1>
+            <h1 class="text-2xl md:text-4xl font-black text-[#2A3F46]">مسابقة أعــــلام السنة</h1>
             <div class="h-1.5 w-32 bg-[#C5B358] mx-auto rounded-full mt-2"></div>
             <p class="text-[#7D7168] font-bold mt-2 text-sm md:text-base">البث المباشر للسحب</p>
         </div>
@@ -50,7 +73,7 @@
         <aside class="flex flex-col w-80 bg-white rounded-[40px] shadow-2xl border border-[#7D7168]/10 overflow-hidden h-full">
             <div class="flex-none bg-[#2A3F46] p-6 text-white text-center">
                 <h3 class="font-bold text-xl flex items-center justify-center gap-3">
-                    <span>👤 المشـــاركون</span>
+                    <span>👤 المتأهلون</span>
                     <span id="participantsCount" class="bg-[#C5B358] text-[#2A3F46] px-3 py-0.5 rounded-full text-sm font-black">0</span>
                 </h3>
             </div>
@@ -64,7 +87,6 @@
         <section class="flex-1 min-h-0 flex flex-col items-center justify-center relative bg-[#2A3F46]/5 rounded-[40px] border-4 border-dashed border-[#7D7168]/20 p-10 text-center overflow-hidden">
             <div id="loadingStatus" class="text-[#7D7168] text-xl font-bold animate-pulse">جاري جلب قائمة المشاركين...</div>
 
-            <!-- تمت إزالة خاصية النقر التجريبية، الصندوق الآن يستجيب فقط للأدمن -->
             <div id="giftContainer" class="hidden relative group transition-transform duration-500 hover:scale-110">
                 <svg width="320" height="320" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-2xl">
                     <rect x="40" y="80" width="160" height="130" rx="8" fill="#7D7168" />
@@ -103,7 +125,7 @@
         <aside class="flex flex-col w-80 bg-white rounded-[40px] shadow-2xl border border-[#C5B358]/30 overflow-hidden h-full">
             <div class="flex-none bg-[#C5B358] p-6 text-[#2A3F46] text-center">
                 <h3 class="font-bold text-xl flex items-center justify-center gap-3">
-                    <span>🏆 سجل الفائزين</span>
+                    <span>🏆 سجـل الفائزين</span>
                     <span id="winnersCount" class="bg-[#2A3F46] text-white px-3 py-0.5 rounded-full text-sm font-black">0</span>
                 </h3>
             </div>
@@ -113,14 +135,13 @@
 
     <footer class="flex-none bg-white border-t border-[#7D7168]/15 px-12 py-5 flex justify-center items-center gap-16 shadow-inner z-50">
         <div class="flex items-center gap-5 border-l-4 border-[#F3EFE9] pl-12">
-            <span class="text-sm font-black text-[#8C847D] uppercase tracking-[0.2em]">شركاء النجاح</span>
+            <span class="text-sm font-black text-[#8C847D] uppercase tracking-[0.2em]">الرعــاة المشاركين</span>
         </div>
         <img src="images/sponsor1.png" class="sponsor-img h-12 md:h-16 w-auto object-contain" alt="الراعي الأول">
         <img src="images/sponsor2.png" class="sponsor-img h-12 md:h-16 w-auto object-contain" alt="الراعي الثاني">
     </footer>
 
     <script>
-        // تم وضع الرابط الرسمي الخاص بك
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-7u8HBhEOPz2kOf_efcDDaOFt4R4Hw4Ld7NJvf7xzyGkpEpGU3b2FVsPlIC_a-gd-/exec";
         const bc = new BroadcastChannel('sunnan_channel');
         
@@ -149,7 +170,6 @@
                 winners = wRes || [];
             } catch (e) {
                 console.error("خطأ في الاتصال بالسيرفر:", e);
-                // تمت إزالة البيانات الوهمية
             }
 
             updateUI();
@@ -248,4 +268,3 @@
     </script>
 </body>
 </html>
-
