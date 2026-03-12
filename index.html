@@ -11,125 +11,126 @@
             --bg-color: #F3EFE9;
             --white: #FFFFFF;
             --accent: #8C847D;
+            --danger: #C5B358; /* لون ذهبي للعداد */
         }
 
-        @font-face {
-            font-family: 'Handicrafts';
-            src: url('fonts/TheYearofHandicrafts-Bold.otf') format('opentype');
-            font-weight: bold;
-        }
+        /* ⚠️ استبدل مسارات الخطوط بمساراتك الفعلية ⚠️ */
+        @font-face { font-family: 'Handicrafts'; src: url('fonts/TheYearofHandicrafts-Bold.otf') format('opentype'); font-weight: bold; }
+        @font-face { font-family: 'HandicraftsReg'; src: url('fonts/TheYearofHandicrafts-Regular.otf') format('opentype'); font-weight: normal; }
 
         body {
             font-family: 'Handicrafts', Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--primary);
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            margin: 0; padding: 0; line-height: 1.6;
+            display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            box-sizing: border-box;
-        }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; flex: 1; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 2px solid var(--secondary);
-            margin-bottom: 40px;
-        }
-
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 2px solid var(--secondary); margin-bottom: 20px; }
         .logo-main { max-height: 100px; object-fit: contain; width: 45%; }
         .logo-contest { max-height: 100px; object-fit: contain; width: 45%; }
 
-        .card {
-            background: var(--white);
-            padding: 50px 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            margin: auto 0; /* لتوسيط البطاقة عمودياً في المساحة المتبقية */
-            border: 1px solid rgba(125, 113, 104, 0.1);
-            text-align: center;
-        }
-
-        h2 { color: var(--primary); margin-bottom: 15px; font-size: 32px; }
-        p { color: var(--secondary); font-size: 18px; margin-bottom: 40px; font-weight: bold; }
-
-        .submit-btn {
+        /* شريط العداد التنازلي */
+        #timer-bar {
             background-color: var(--primary);
             color: var(--white);
-            border: none;
-            width: 100%;
-            padding: 20px;
-            border-radius: 12px;
-            font-size: 22px;
-            font-family: 'Handicrafts', sans-serif;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(42, 63, 70, 0.2);
-            display: block;
             text-align: center;
-            text-decoration: none;
-            box-sizing: border-box;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            font-size: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: none; /* يظهر فقط إذا كان هناك وقت */
+            border: 2px solid var(--danger);
         }
+        #time-left { font-family: Arial, sans-serif; font-weight: bold; font-size: 24px; color: var(--danger); letter-spacing: 2px; direction: ltr; display: inline-block; margin-right: 10px; }
 
-        .submit-btn:hover { 
-            background-color: #1e2e33; 
-            transform: translateY(-3px); 
-            box-shadow: 0 6px 20px rgba(42, 63, 70, 0.3);
+        .card { background: var(--white); padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid rgba(125, 113, 104, 0.1); }
+        .card-closed { padding: 50px 30px; margin: auto 0; text-align: center; }
+
+        h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--secondary); }
+        input[type="text"], input[type="tel"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; font-family: inherit; font-size: 16px; }
+
+        .question-text { font-size: 18px; margin-bottom: 15px; display: block; color: var(--primary); }
+        .options-container { display: flex; flex-direction: column; gap: 10px; }
+        .option-label { display: flex; align-items: center; padding: 12px; background: #fdfcfb; border: 1px solid #eee; border-radius: 10px; cursor: pointer; transition: 0.3s; }
+        .option-label:hover { background: #f3f3f3; border-color: var(--secondary); }
+        .option-label input { margin-left: 12px; accent-color: var(--primary); width: 18px; height: 18px; }
+
+        .submit-btn {
+            background-color: var(--primary); color: var(--white); border: none; width: 100%; padding: 18px;
+            border-radius: 12px; font-size: 20px; font-family: 'Handicrafts', sans-serif; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(42, 63, 70, 0.3); display: block; text-align: center; text-decoration: none; box-sizing: border-box;
         }
+        .submit-btn:hover { background-color: #1e2e33; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(42, 63, 70, 0.3); }
+        .submit-btn:disabled { background-color: #ccc; cursor: not-allowed; }
 
         footer { text-align: center; margin-top: auto; padding-top: 40px; padding-bottom: 30px; }
         footer p { color: var(--accent); font-size: 14px; margin-bottom: 15px; }
-
-        .sponsors {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
+        .sponsors { display: flex; justify-content: center; align-items: center; gap: 30px; flex-wrap: wrap; }
         .sponsors img { height: 90px; object-fit: contain; filter: grayscale(20%); transition: 0.3s; }
         .sponsors img:hover { filter: grayscale(0%); }
 
-        .status-icon { font-size: 70px; margin-bottom: 20px; }
+        #loading, #quiz-ui, #success, #no-questions, #closed-ui { display: none; }
+        .status-icon { font-size: 60px; margin-bottom: 15px; text-align: center; display: block; }
+        .closed-title { font-size: 32px; }
+        .closed-desc { font-family: 'HandicraftsReg', sans-serif; font-size: 18px; font-weight: bold; margin-bottom: 30px; color: var(--secondary); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- القسم العلوي: الشعارات -->
     <header>
         <img src="images/logo-sunnan.png" class="logo-main" alt="جمعية سنن">
         <img src="images/logo-contest.png" class="logo-contest" alt="مسابقة أعلام السنة">
     </header>
 
-    <!-- القسم الأوسط: رسالة الإغلاق -->
-    <div class="card">
-        <div class="status-icon">⏳</div>
-        <h2>انتهى وقت المشاركة</h2>
-        <p>نشكر لكم تفاعلكم.. ونتمنى التوفيق للجميع في السحب</p>
-        
-        <!-- زر الانتقال إلى العجلة -->
-        <a href="https://sunnan-quizz.vercel.app/wheell.html" class="submit-btn">
-            للانتقال إلى صفحة السحب: اضغط هنا 🎡
-        </a>
+    <div id="loading" class="card"><div class="status-icon">⏳</div><h2>جاري تحميل البيانات...</h2></div>
+
+    <!-- شريط العداد التنازلي -->
+    <div id="timer-bar">
+        <span>ينتهي وقت المشاركـــة خـلال:</span><br>
+        <span id="time-left">--:--:--</span>
     </div>
 
-    <!-- القسم السفلي: الرعاة -->
+    <!-- واجهة الأسئلة -->
+    <div id="quiz-ui">
+        <div class="card">
+            <h2>بيانات المشارك</h2>
+            <label>الاسم :</label>
+            <input type="text" id="name" placeholder="أدخل اسمك الثلاثي">
+            <label>رقم الجوال:</label>
+            <input type="tel" id="phone" placeholder="05xxxxxxxx">
+        </div>
+        <div id="questions-list"></div>
+        <button class="submit-btn" id="submit-btn" onclick="sendData()">إرسال المشاركة</button>
+    </div>
+
+    <!-- واجهة الإرسال الناجح -->
+    <div id="success" class="card card-closed">
+        <div class="status-icon">✅</div>
+        <h2 class="closed-title">تم استلام مشاركتك!</h2>
+        <p class="closed-desc">شكراً لمشاركتك.. نتمنى لك التوفيق في السحب.</p>
+        <a href="https://sunnan-quizz.vercel.app/wheell.html" class="submit-btn">الانتقال لصفحة السحب المباشر 🎡</a>
+    </div>
+
+    <!-- واجهة انتهاء الوقت وإغلاق المشاركة -->
+    <div id="closed-ui" class="card card-closed">
+        <div class="status-icon">⏳</div>
+        <h2 class="closed-title">انتهى وقت المشاركة</h2>
+        <p class="closed-desc">نشكر لكم تفاعلكم.. ونتمنى التوفيق للجميع</p>
+        <a href="https://sunnan-quizz.vercel.app/wheell.html" class="submit-btn">للانتقال إلى صفحة السحب: اضغط هنا 🎡</a>
+    </div>
+
+    <div id="no-questions" class="card card-closed">
+        <div class="status-icon">📝</div>
+        <h2>لا توجد أسئلة حالياً</h2>
+        <p class="closed-desc">انتظرونا في المسابقة القادمة بإذن الله.</p>
+    </div>
+
     <footer>
         <p>الـــرعاة المشاركين</p>
         <div class="sponsors">
@@ -139,5 +140,126 @@
     </footer>
 </div>
 
+<script>
+    // تم وضع الرابط الجديد الخاص بقوقل شيت هنا
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlqXoukLsteiLD65OwWqZmfbe4Zm-zLqJbskcGk0pcCmS0kM74g8cRocgFL8vI49Eo/exec";
+    let countdownInterval;
+
+    window.onload = function() {
+        showSection('loading');
+        fetch(`${SCRIPT_URL}?action=getQuestionsAndDeadline`)
+            .then(response => response.json())
+            .then(data => {
+                let questions = data.questions || data; 
+                let deadline = data.deadline || null;
+
+                if (!questions || questions.length === 0 || questions.status === "no_questions") {
+                    showSection('no-questions');
+                    return;
+                }
+
+                if (deadline) {
+                    startTimer(deadline, questions);
+                } else {
+                    renderQuestions(questions);
+                    showSection('quiz-ui');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showSection('no-questions');
+            });
+    };
+
+    function startTimer(deadlineStr, questions) {
+        const targetDate = new Date(deadlineStr).getTime();
+        
+        countdownInterval = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance <= 0) {
+                // انتهى الوقت!
+                clearInterval(countdownInterval);
+                document.getElementById('timer-bar').style.display = 'none';
+                showSection('closed-ui'); // إظهار صفحة الإغلاق تلقائياً
+            } else {
+                // حساب الساعات والدقائق والثواني
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('time-left').innerText = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if(document.getElementById('quiz-ui').style.display !== 'block') {
+                    renderQuestions(questions);
+                    showSection('quiz-ui');
+                    document.getElementById('timer-bar').style.display = 'block';
+                }
+            }
+        }, 1000);
+    }
+
+    function renderQuestions(questions) {
+        const container = document.getElementById('questions-list');
+        if(container.innerHTML !== "") return; 
+        
+        questions.slice(0, 3).forEach((q, index) => {
+            const qNum = index + 1;
+            container.innerHTML += `
+                <div class="card">
+                    <span class="question-text">س${qNum}: ${q.question}</span>
+                    <div class="options-container">
+                        ${q.options.map((opt, i) => `
+                            <label class="option-label">
+                                <input type="radio" name="q${qNum}" value="${opt}" required>
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function sendData() {
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
+        const btn = document.getElementById('submit-btn');
+
+        if (!name || !phone) { alert("لا تنسَ إكمال الاسم ورقم الجوال!"); return; }
+        
+        const responses = {
+            action: "submitQuiz", name: name, phone: phone,
+            q1: document.querySelector('input[name="q1"]:checked')?.value || "",
+            q2: document.querySelector('input[name="q2"]:checked')?.value || "",
+            q3: document.querySelector('input[name="q3"]:checked')?.value || ""
+        };
+
+        if (!responses.q1 || !responses.q2 || !responses.q3) {
+            alert("يرجى الإجابة على جميع الأسئلة لدخول السحب."); return;
+        }
+
+        btn.disabled = true; btn.innerText = "جاري الإرسال...";
+
+        fetch(SCRIPT_URL, {
+            method: "POST", mode: "no-cors", cache: "no-cache", body: JSON.stringify(responses)
+        }).then(() => {
+            clearInterval(countdownInterval);
+            document.getElementById('timer-bar').style.display = 'none';
+            showSection('success');
+        }).catch(err => {
+            alert("حدث خطأ في الإرسال، يرجى المحاولة مرة أخرى.");
+            btn.disabled = false; btn.innerText = "إرسال المشاركة";
+        });
+    }
+
+    function showSection(id) {
+        ['loading', 'quiz-ui', 'success', 'no-questions', 'closed-ui'].forEach(sec => {
+            document.getElementById(sec).style.display = (sec === id) ? 'block' : 'none';
+        });
+    }
+</script>
 </body>
 </html>
