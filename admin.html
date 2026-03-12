@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* إضافة نفس الخطوط المستخدمة في صفحة العرض لتوحيد الهوية */
+        /* الخطوط المخصصة للهوية */
         @font-face { font-family: 'CustomFont'; src: url('fonts/TheYearofHandicrafts-Regular.otf') format('opentype'); font-weight: 400; }
         @font-face { font-family: 'CustomFont'; src: url('fonts/TheYearofHandicrafts-Bold.otf') format('opentype'); font-weight: 700; }
         @font-face { font-family: 'CustomFont'; src: url('fonts/TheYearofHandicrafts-Black.otf') format('opentype'); font-weight: 900; }
@@ -15,13 +15,25 @@
         body { font-family: 'CustomFont', 'Tajawal', sans-serif; background-color: #F3EFE9; }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* تخصيص شكل أيقونة التقويم في حقل الوقت */
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(0.4) sepia(1) saturate(3) hue-rotate(5deg);
+            transform: scale(1.2);
+        }
+
+        /* شريط التمرير للنافذة المنبثقة */
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #C5B358; border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-4 relative">
 
     <!-- 1. شاشة تسجيل الدخول -->
     <div id="login-panel" class="bg-white p-8 rounded-[30px] shadow-2xl w-full max-w-md border-t-8 border-[#2A3F46] text-center fade-in">
-        <img src="images/logo-sunnan.png" class="h-16 mx-auto mb-6" alt="شعار سنن" onerror="this.src='https://placehold.co/150x60/2A3F46/FFFFFF?text=Sunnan'">
+        <img src="images/logo-sunnan.png" class="h-32 mx-auto mb-12" alt="شعار سنن" onerror="this.src='https://placehold.co/150x60/2A3F46/FFFFFF?text=Sunnan'">
         <h2 class="text-2xl font-black text-[#2A3F46] mb-2">غرفة التحكم الآمنة</h2>
         <p class="text-[#7D7168] text-sm font-bold mb-6">أدخل كلمة المرور للوصول إلى نظام السحب</p>
         
@@ -33,28 +45,47 @@
         <p id="login-error" class="text-red-500 font-bold mt-4 hidden">كلمة المرور غير صحيحة!</p>
     </div>
 
-    <!-- 2. لوحة التحكم الرئيسية (تظهر بعد تسجيل الدخول) -->
-    <div id="admin-panel" class="hidden bg-white p-8 rounded-[40px] shadow-2xl w-full max-w-xl border-4 border-[#C5B358]/30 fade-in">
-        <div class="text-center mb-8 border-b border-[#F3EFE9] pb-6">
+    <!-- 2. لوحة التحكم الرئيسية -->
+    <div id="admin-panel" class="hidden bg-white p-6 md:p-8 rounded-[40px] shadow-2xl w-full max-w-xl border-4 border-[#C5B358]/30 fade-in">
+        <div class="text-center mb-6 border-b border-[#F3EFE9] pb-6">
             <h2 class="text-3xl font-black text-[#2A3F46] mb-2">لوحة إدارة السحب 🎛️</h2>
             <div id="status-text" class="text-[#C5B358] font-bold text-sm">جاري جلب البيانات من النظام...</div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-8">
-            <div class="bg-[#F3EFE9] p-4 rounded-2xl text-center border border-[#7D7168]/10">
+        <!-- الإحصائيات -->
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-[#F3EFE9] p-4 rounded-2xl text-center border border-[#7D7168]/10 relative flex flex-col items-center justify-center">
                 <span class="block text-[#8C847D] text-xs font-black uppercase mb-1">المتأهلون للسحب</span>
                 <span id="stats" class="text-3xl font-black text-[#2A3F46]">0</span>
+                <!-- 🆕 زر عرض قائمة الأسماء 🆕 -->
+                <button onclick="toggleParticipantsModal()" class="mt-2 text-xs bg-[#C5B358] text-white px-4 py-1.5 rounded-full hover:bg-[#b09e4a] transition-colors font-bold shadow-sm">
+                    عرض الأسماء 📋
+                </button>
             </div>
-            <div class="bg-[#F3EFE9] p-4 rounded-2xl text-center border border-[#7D7168]/10">
+            <div class="bg-[#F3EFE9] p-4 rounded-2xl text-center border border-[#7D7168]/10 flex flex-col items-center justify-center">
                 <span class="block text-[#8C847D] text-xs font-black uppercase mb-1">الجوائز المتبقية</span>
                 <span id="prizes-stats" class="text-3xl font-black text-[#C5B358]">0</span>
             </div>
         </div>
+
+        <!-- قسم إدارة وقت الإغلاق (العداد التنازلي) -->
+        <div class="bg-[#2A3F46]/5 p-5 rounded-2xl border-2 border-dashed border-[#2A3F46]/20 mb-8">
+            <h3 class="font-bold text-[#2A3F46] mb-3 text-center">⏳ ضبط وقت الإغلاق الآلي للمشاركة</h3>
+            <div class="flex flex-col md:flex-row gap-3">
+                <input type="datetime-local" id="deadline-input" class="flex-1 bg-white border border-[#7D7168]/30 rounded-xl px-4 py-3 text-[#2A3F46] font-sans font-bold outline-none focus:border-[#C5B358] shadow-inner text-sm">
+                <button onclick="setDeadline()" id="timer-btn" class="bg-[#2A3F46] hover:bg-[#1a282c] text-white font-bold px-6 py-3 rounded-xl transition-all shadow-md whitespace-nowrap">
+                    تفعيل العداد
+                </button>
+            </div>
+            <p class="text-[11px] md:text-xs text-[#7D7168] mt-3 text-center font-bold">بمجرد وصول الوقت المحدد سيتم إغلاق صفحة الأسئلة آلياً للمستخدمين وتحويلهم لصفحة السحب.</p>
+        </div>
         
+        <!-- زر إطلاق السحب -->
         <button id="spinBtn" onclick="triggerSpin()" disabled class="w-full bg-[#C5B358] hover:bg-[#b09e4a] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-black py-5 rounded-2xl shadow-xl transition-all hover:scale-105 active:scale-95 text-xl flex items-center justify-center gap-3">
             <span>إطلاق السحب الآن 🎁</span>
         </button>
 
+        <!-- سجل الجلسة -->
         <div class="mt-8">
             <h3 class="font-bold text-[#2A3F46] mb-3 border-b border-[#F3EFE9] pb-2">سجل السحوبات في هذه الجلسة:</h3>
             <ul id="session-winners" class="space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar text-sm">
@@ -63,10 +94,21 @@
         </div>
     </div>
 
+    <!-- 🆕 نافذة عرض قائمة المشاركين المنبثقة 🆕 -->
+    <div id="participants-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm fade-in">
+        <div class="bg-white rounded-[30px] w-full max-w-md p-6 relative max-h-[80vh] flex flex-col shadow-2xl border-4 border-[#C5B358]/30">
+            <button onclick="toggleParticipantsModal()" class="absolute top-5 left-5 text-[#7D7168] hover:text-red-500 font-bold text-2xl transition-colors">&times;</button>
+            <h3 class="font-black text-[#2A3F46] text-xl mb-4 border-b border-[#F3EFE9] pb-3 text-center">قائمة المتأهلين للسحب 📋</h3>
+            <div class="overflow-y-auto custom-scrollbar flex-1 pr-2">
+                <ul id="participants-list-modal" class="space-y-2 text-sm font-bold text-[#2A3F46]">
+                    <!-- سيتم تعبئة الأسماء هنا برمجياً -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-7u8HBhEOPz2kOf_efcDDaOFt4R4Hw4Ld7NJvf7xzyGkpEpGU3b2FVsPlIC_a-gd-/exec";
-        
-        // ⚠️ التعديل 1: توحيد اسم قناة الاتصال لتتطابق مع صفحة العرض
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlqXoukLsteiLD65OwWqZmfbe4Zm-zLqJbskcGk0pcCmS0kM74g8cRocgFL8vI49Eo/exec";
         const bc = new BroadcastChannel('sunnan_channel'); 
         
         let participants = [];
@@ -87,7 +129,6 @@
 
         async function loadData() {
             try {
-                // ⚠️ التعديل 2: جلب المتأهلين والجوائز معاً
                 const [qRes, pRes] = await Promise.all([
                     fetch(`${SCRIPT_URL}?action=getQualified`).then(r => r.json()),
                     fetch(`${SCRIPT_URL}?action=getPrizes`).then(r => r.json())
@@ -111,6 +152,64 @@
             }
         }
 
+        // 🆕 دالة إظهار/إخفاء نافذة أسماء المشاركين 🆕
+        function toggleParticipantsModal() {
+            const modal = document.getElementById('participants-modal');
+            const list = document.getElementById('participants-list-modal');
+            
+            if (modal.classList.contains('hidden')) {
+                // تعبئة القائمة بالأسماء
+                if (participants.length > 0) {
+                    list.innerHTML = participants.map((p, i) => `
+                        <li class="bg-[#F3EFE9] p-3 rounded-xl border-r-4 border-[#C5B358] shadow-sm flex gap-3">
+                            <span class="text-[#7D7168]">${i + 1}.</span> 
+                            <span>${p}</span>
+                        </li>
+                    `).join('');
+                } else {
+                    list.innerHTML = '<li class="text-center text-[#7D7168] mt-8">لا يوجد متأهلين حتى الآن.</li>';
+                }
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        async function setDeadline() {
+            const datetimeVal = document.getElementById('deadline-input').value;
+            if (!datetimeVal) { 
+                alert("الرجاء اختيار التاريخ والوقت أولاً!"); 
+                return; 
+            }
+
+            const btn = document.getElementById('timer-btn');
+            btn.disabled = true; 
+            btn.innerText = "جاري الحفظ...";
+
+            const isoTime = new Date(datetimeVal).toISOString();
+
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'setDeadline', password: adminPassword, deadline: isoTime })
+                });
+                
+                alert("تم تفعيل العداد التنازلي وإرساله للمشاركين بنجاح! ⏱️");
+                btn.innerText = "تم الحفظ ✅";
+                btn.classList.replace('bg-[#2A3F46]', 'bg-green-600');
+                
+                setTimeout(() => { 
+                    btn.innerText = "تعديل العداد"; 
+                    btn.classList.replace('bg-green-600', 'bg-[#2A3F46]');
+                    btn.disabled = false; 
+                }, 3000);
+            } catch (error) {
+                alert("حدث خطأ أثناء حفظ الوقت، تأكد من اتصال الإنترنت!");
+                btn.innerText = "تفعيل العداد"; 
+                btn.disabled = false;
+            }
+        }
+
         async function triggerSpin() {
             if (participants.length === 0) {
                 alert("انتهت الأسماء المتأهلة!");
@@ -121,35 +220,22 @@
             btn.disabled = true;
             btn.innerHTML = "جاري تنفيذ السحب ⏳...";
 
-            // ⚠️ التعديل 3: اختيار عشوائي حقيقي للفائز والجائزة
             const randomWinnerIndex = Math.floor(Math.random() * participants.length);
             const winnerName = participants[randomWinnerIndex];
-            
-            // سحب جائزة (بالترتيب من القائمة) أو وضع جائزة افتراضية
             const prizeName = prizes.length > 0 ? prizes.shift() : "جائزة التميز 🎁";
             
-            // إزالة الفائز من القائمة المحلية حتى لا يتكرر في السحبات القادمة
             participants.splice(randomWinnerIndex, 1);
-
-            // ⚠️ التعديل 4: إرسال الأمر بالصيغة الصحيحة التي تقرأها صفحة العرض (wheel.html)
             bc.postMessage({ type: 'SPIN', winner: winnerName, prize: prizeName });
 
-            // ⚠️ التعديل 5: تسجيل الفائز رسمياً في Google Sheets للحفظ الدائم
             try {
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify({
-                        action: 'recordWinner',
-                        password: adminPassword,
-                        winnerName: winnerName,
-                        prizeName: prizeName
-                    })
+                    body: JSON.stringify({ action: 'recordWinner', password: adminPassword, winnerName: winnerName, prizeName: prizeName })
                 });
             } catch (error) {
                 console.error("لم يتم حفظ الفائز في قوقل شيت", error);
             }
 
-            // تحديث الواجهة للأدمن
             document.getElementById('stats').innerText = participants.length;
             document.getElementById('prizes-stats').innerText = prizes.length;
             
@@ -157,7 +243,6 @@
             if (sessionList.innerText.includes("لم يتم")) sessionList.innerHTML = "";
             sessionList.innerHTML = `<li class="bg-[#F3EFE9] p-2 rounded text-[#2A3F46] font-bold border-r-4 border-[#C5B358] mb-1">🎉 ${winnerName} - <span class="text-[#7D7168]">${prizeName}</span></li>` + sessionList.innerHTML;
 
-            // إيقاف الزر لـ 5 ثوانٍ حتى تنتهي حركة الصندوق في شاشة العرض
             setTimeout(() => {
                 if (participants.length > 0) {
                     btn.disabled = false;
