@@ -11,116 +11,79 @@
             --bg-color: #F3EFE9;
             --white: #FFFFFF;
             --accent: #8C847D;
+            --danger: #C5B358;
         }
 
-        @font-face {
-            font-family: 'Handicrafts';
-            src: url('fonts/TheYearofHandicrafts-Bold.otf') format('opentype');
-            font-weight: bold;
-        }
+        @font-face { font-family: 'Handicrafts'; src: url('fonts/TheYearofHandicrafts-Bold.otf') format('opentype'); font-weight: bold; }
+        @font-face { font-family: 'HandicraftsReg'; src: url('fonts/TheYearofHandicrafts-Regular.otf') format('opentype'); font-weight: normal; }
 
         body {
             font-family: 'Handicrafts', Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--primary);
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
+            margin: 0; padding: 0; line-height: 1.6;
+            display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; flex: 1; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 2px solid var(--secondary);
-            margin-bottom: 30px;
-        }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 2px solid var(--secondary); margin-bottom: 20px; }
+        .logo-main { max-height: 100px; object-fit: contain; width: 45%; }
+        .logo-contest { max-height: 100px; object-fit: contain; width: 45%; }
 
-        .logo-main { max-height: 150px; object-fit: contain; }
-        .logo-contest { max-height: 150px; object-fit: contain; }
-
-        .card {
-            background: var(--white);
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            border: 1px solid rgba(125, 113, 104, 0.1);
+        #timer-bar {
+            background-color: var(--primary); color: var(--white); text-align: center; padding: 15px;
+            border-radius: 15px; margin-bottom: 20px; font-size: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: none; border: 2px solid var(--danger);
         }
+        #time-left { font-family: Arial, sans-serif; font-weight: bold; font-size: 24px; color: var(--danger); letter-spacing: 2px; direction: ltr; display: inline-block; margin-right: 10px; }
+
+        .card { background: var(--white); padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid rgba(125, 113, 104, 0.1); }
+        .card-closed { padding: 50px 30px; margin: auto 0; text-align: center; }
 
         h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
-        
         label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--secondary); }
+        input[type="text"], input[type="tel"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; font-family: inherit; font-size: 16px; }
 
-        input[type="text"], input[type="tel"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-            font-family: inherit;
-            font-size: 16px;
-        }
-
-        .question-text { font-size: 18px; margin-bottom: 15px; display: block; color: var(--primary); }
-        
         .options-container { display: flex; flex-direction: column; gap: 10px; }
-
-        .option-label {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            background: #fdfcfb;
-            border: 1px solid #eee;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
+        .option-label { display: flex; align-items: center; padding: 15px; background: #fdfcfb; border: 1px solid #eee; border-radius: 10px; cursor: pointer; transition: 0.3s; font-size: 16px; font-weight: bold;}
         .option-label:hover { background: #f3f3f3; border-color: var(--secondary); }
-        .option-label input { margin-left: 12px; accent-color: var(--primary); width: 18px; height: 18px; }
+        .option-label input { margin-left: 12px; accent-color: var(--primary); width: 20px; height: 20px; }
 
         .submit-btn {
-            background-color: var(--primary);
-            color: var(--white);
-            border: none;
-            width: 100%;
-            padding: 18px;
-            border-radius: 12px;
-            font-size: 20px;
-            font-family: 'Handicrafts', sans-serif;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(42, 63, 70, 0.3);
+            background-color: var(--primary); color: var(--white); border: none; width: 100%; padding: 18px;
+            border-radius: 12px; font-size: 20px; font-family: 'Handicrafts', sans-serif; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(42, 63, 70, 0.3); display: block; text-align: center; text-decoration: none; box-sizing: border-box; margin-top: 10px;
         }
-
-        .submit-btn:hover { background-color: #1e2e33; transform: translateY(-2px); }
+        .submit-btn:hover { background-color: #1e2e33; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(42, 63, 70, 0.3); }
         .submit-btn:disabled { background-color: #ccc; cursor: not-allowed; }
 
-        footer { text-align: center; margin-top: 80px; padding-bottom: 80px; }
+        footer { text-align: center; margin-top: auto; padding-top: 40px; padding-bottom: 30px; }
         footer p { color: var(--accent); font-size: 14px; margin-bottom: 15px; }
-
-        .sponsors {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
-        .sponsors img { height: 150px; object-fit: contain; filter: grayscale(20%); transition: 0.3s; }
+        .sponsors { display: flex; justify-content: center; align-items: center; gap: 30px; flex-wrap: wrap; }
+        .sponsors img { height: 90px; object-fit: contain; filter: grayscale(20%); transition: 0.3s; }
         .sponsors img:hover { filter: grayscale(0%); }
 
-        #loading, #success, #no-questions { display: none; text-align: center; padding: 40px 20px; }
-        .status-icon { font-size: 50px; margin-bottom: 20px; }
+        #loading, #quiz-ui, #success, #closed-ui { display: none; }
+        .status-icon { font-size: 60px; margin-bottom: 15px; text-align: center; display: block; }
+        .closed-title { font-size: 32px; }
+        .closed-desc { font-family: 'HandicraftsReg', sans-serif; font-size: 18px; font-weight: bold; margin-bottom: 25px; color: var(--secondary); }
+        
+        .time-box { background-color: #F3EFE9; padding: 15px; border-radius: 12px; border: 1px solid rgba(197, 179, 88, 0.5); margin-bottom: 25px; display: none; }
+        .time-box span.title { display: block; font-size: 14px; color: var(--secondary); font-weight: bold; margin-bottom: 5px; }
+        .time-box span.value { display: block; font-size: 22px; color: var(--primary); font-weight: bold; font-family: Arial, sans-serif; }
+
+        /* تنسيق الرسالة الثابتة */
+        .message-content {
+            font-size: 18px;
+            color: var(--primary);
+            line-height: 1.8;
+            text-align: center;
+            margin-bottom: 25px;
+            font-family: 'HandicraftsReg', sans-serif;
+            font-weight: bold;
+        }
+        .message-highlight { color: var(--danger); font-size: 20px; font-family: 'Handicrafts', sans-serif;}
     </style>
 </head>
 <body>
@@ -131,30 +94,70 @@
         <img src="images/logo-contest.png" class="logo-contest" alt="مسابقة أعلام السنة">
     </header>
 
-    <div id="loading"><p>جاري تحميل أسئلة اليوم...</p></div>
+    <div id="loading" class="card"><div class="status-icon">⏳</div><h2>جاري تحميل البيانات...</h2></div>
+
+    <div id="timer-bar">
+        <span>ينتهي وقت المشاركة خلال:</span><br>
+        <span id="time-left">--:--:--</span>
+    </div>
 
     <div id="quiz-ui">
         <div class="card">
             <h2>بيانات المشارك</h2>
             <label>الاسم :</label>
-            <input type="text" id="name" placeholder="أدخل اسمك هنا">
+            <input type="text" id="name" placeholder="أدخل اسمك الثلاثي">
             <label>رقم الجوال:</label>
             <input type="tel" id="phone" placeholder="05xxxxxxxx">
         </div>
-        <div id="questions-list"></div>
+        
+        <!-- البطاقة الجديدة الثابتة للرسالة والخيارات -->
+        <div class="card">
+            <div class="message-content">
+                مع وصول سلسلة أعلام السُّنّة إلى الحلقة الثالثة عشرة،<br>
+                يزداد الأثر كلما اتسعت دائرة النشر،<br>
+                ويعظم الأجر كلما امتدّ نشر السُّنّة النبوية.<br><br>
+                
+                <span class="message-highlight">للدخول في السحب:</span><br>
+                أعِد توجيه رسالة اليوم عبر السهم أسفلها<br>
+                إلى حالة الواتساب وخمس مجموعات.<br><br>
+                
+                وكن شريكًا في نشر السُّنّة.
+            </div>
+
+            <div class="options-container">
+                <label class="option-label">
+                    <input type="radio" name="participation" value="تـمّ النشر، وأنا شريكٌ معكم في نشر السُّنّة" required>
+                    <span>١- تـمّ النشر، وأنا شريكٌ معكم في نشر السُّنّة</span>
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="participation" value="لعلّها في وقتٍ آخر" required>
+                    <span>٢- لعلّها في وقتٍ آخر</span>
+                </label>
+            </div>
+        </div>
+
         <button class="submit-btn" id="submit-btn" onclick="sendData()">إرسال المشاركة</button>
     </div>
 
-    <div id="success" class="card">
+    <div id="success" class="card card-closed">
         <div class="status-icon">✅</div>
-        <h2>تم استلام إجاباتك!</h2>
-        <p>شكراً لمشاركتك في مسابقة أعلام السنة.</p>
+        <h2 class="closed-title">تم استلام مشاركتك!</h2>
+        <p class="closed-desc">شكراً لك، وجعلنا الله وإياكم شركاء في نشر السنة.</p>
+        
+        <div id="draw-time-container" class="time-box">
+            <span class="title">موعد السحب المباشر:</span>
+            <span id="draw-time-display" class="value">--:--</span>
+        </div>
+
+        <p id="redirect-msg" style="color: var(--secondary); font-weight: bold; margin-bottom: 15px; font-size: 14px;">سيتم تحويلك تلقائياً لصفحة السحب خلال 5 ثوانٍ...</p>
+        <a href="wheell.html" class="submit-btn">الانتقال لصفحة السحب يدوياً 🎡</a>
     </div>
 
-    <div id="no-questions" class="card">
+    <div id="closed-ui" class="card card-closed">
         <div class="status-icon">⏳</div>
-        <h2>لا توجد أسئلة حالياً</h2>
-        <p>انتظرونا في المسابقة القادمة بإذن الله.</p>
+        <h2 class="closed-title">انتهى وقت المشاركة</h2>
+        <p class="closed-desc">نشكر لكم تفاعلكم.. ونتمنى التوفيق للجميع في السحب</p>
+        <a href="wheell.html" class="submit-btn">للانتقال إلى صفحة السحب: اضغط هنا 🎡</a>
     </div>
 
     <footer>
@@ -167,91 +170,119 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-7u8HBhEOPz2kOf_efcDDaOFt4R4Hw4Ld7NJvf7xzyGkpEpGU3b2FVsPlIC_a-gd-/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzlqXoukLsteiLD65OwWqZmfbe4Zm-zLqJbskcGk0pcCmS0kM74g8cRocgFL8vI49Eo/exec";
+    let countdownInterval;
+    let drawTimeFormatted = "";
 
     window.onload = function() {
         showSection('loading');
-        fetch(`${SCRIPT_URL}?action=getQuestions`)
+        // جلب الوقت فقط من السيرفر لأن الأسئلة أصبحت ثابتة
+        fetch(`${SCRIPT_URL}?action=getQuestionsAndDeadline`)
             .then(response => response.json())
             .then(data => {
-                if (!data || data.length === 0 || data.status === "no_questions") {
-                    showSection('no-questions');
+                let deadline = data.deadline || null;
+
+                if (deadline) {
+                    const dateObj = new Date(deadline);
+                    drawTimeFormatted = dateObj.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit', hour12: true });
+                    startTimer(deadline);
                 } else {
-                    renderQuestions(data);
                     showSection('quiz-ui');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                showSection('no-questions');
+                // إظهار الواجهة حتى لو فشل جلب الوقت لضمان استمرار المشاركة
+                showSection('quiz-ui'); 
             });
     };
 
-    function renderQuestions(questions) {
-        const container = document.getElementById('questions-list');
-        // تم إضافة slice(0, 3) هنا لضمان عرض 3 أسئلة فقط حتى لو أرسل السكربت أكثر
-        questions.slice(0, 3).forEach((q, index) => {
-            const qNum = index + 1;
-            container.innerHTML += `
-                <div class="card">
-                    <span class="question-text">س${qNum}: ${q.question}</span>
-                    <div class="options-container">
-                        ${q.options.map((opt, i) => `
-                            <label class="option-label">
-                                <input type="radio" name="q${qNum}" value="${opt}" required>
-                                <span>${opt}</span>
-                            </label>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        });
+    function startTimer(deadlineStr) {
+        const targetDate = new Date(deadlineStr).getTime();
+        
+        countdownInterval = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('timer-bar').style.display = 'none';
+                showSection('closed-ui');
+            } else {
+                // ✅ المعادلة المصححة لجمع إجمالي الساعات بالكامل (لا تحذف 24 ساعة)
+                const hours = Math.floor(distance / (1000 * 60 * 60)); 
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('time-left').innerText = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if(document.getElementById('quiz-ui').style.display !== 'block') {
+                    showSection('quiz-ui');
+                    document.getElementById('timer-bar').style.display = 'block';
+                }
+            }
+        }, 1000);
     }
 
     function sendData() {
         const name = document.getElementById('name').value;
         const phone = document.getElementById('phone').value;
         const btn = document.getElementById('submit-btn');
+        const selectedOption = document.querySelector('input[name="participation"]:checked');
 
         if (!name || !phone) { alert("لا تنسَ إكمال الاسم ورقم الجوال!"); return; }
+        if (!selectedOption) { alert("يرجى اختيار أحد الخيارين في الأسفل لدخول السحب."); return; }
         
+        // إرسال الإجابة كـ q1 وإرسال رسالة فارغة لـ q2 و q3 لكي لا يختل ترتيب الأعمدة في الشيت
         const responses = {
-            action: "submitQuiz",
-            name: name,
+            action: "submitQuiz", 
+            name: name, 
             phone: phone,
-            q1: document.querySelector('input[name="q1"]:checked')?.value || "",
-            q2: document.querySelector('input[name="q2"]:checked')?.value || "",
-            q3: document.querySelector('input[name="q3"]:checked')?.value || ""
+            q1: selectedOption.value,
+            q2: "لا يوجد (رسالة ثابتة)",
+            q3: "لا يوجد (رسالة ثابتة)"
         };
 
-        if (!responses.q1 || !responses.q2 || !responses.q3) {
-            alert("يرجى الإجابة على جميع الأسئلة لدخول السحب.");
-            return;
-        }
-
-        btn.disabled = true;
-        btn.innerText = "جاري الإرسال...";
+        btn.disabled = true; btn.innerText = "جاري الإرسال...";
 
         fetch(SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
-            cache: "no-cache",
-            body: JSON.stringify(responses)
+            method: "POST", mode: "no-cors", cache: "no-cache", body: JSON.stringify(responses)
         }).then(() => {
+            clearInterval(countdownInterval);
+            document.getElementById('timer-bar').style.display = 'none';
+            
+            if (drawTimeFormatted) {
+                document.getElementById('draw-time-display').innerText = drawTimeFormatted;
+                document.getElementById('draw-time-container').style.display = 'block';
+            }
+            
             showSection('success');
+
+            // التوجيه التلقائي بعد الإجابة
+            let secondsLeft = 5;
+            const redirectMsg = document.getElementById('redirect-msg');
+            const redirectInterval = setInterval(() => {
+                secondsLeft--;
+                if (secondsLeft > 0) {
+                    redirectMsg.innerText = `سيتم تحويلك تلقائياً لصفحة السحب خلال ${secondsLeft} ثوانٍ...`;
+                } else {
+                    clearInterval(redirectInterval);
+                    window.location.href = "wheell.html";
+                }
+            }, 1000);
+
         }).catch(err => {
             alert("حدث خطأ في الإرسال، يرجى المحاولة مرة أخرى.");
-            btn.disabled = false;
-            btn.innerText = "إرسال المشاركة";
+            btn.disabled = false; btn.innerText = "إرسال المشاركة";
         });
     }
 
     function showSection(id) {
-        ['loading', 'quiz-ui', 'success', 'no-questions'].forEach(sec => {
+        ['loading', 'quiz-ui', 'success', 'closed-ui'].forEach(sec => {
             document.getElementById(sec).style.display = (sec === id) ? 'block' : 'none';
         });
     }
 </script>
 </body>
 </html>
-
